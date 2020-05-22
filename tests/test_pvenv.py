@@ -1,9 +1,9 @@
 import os
 import pytest
 
-from ..core.pvenv import PVEnv
-from ..core.pv_array import PVArray
-from ..core.data_manager import parse_depfie_csv
+from ..pvmppt.pvenv import PVEnv
+from ..pvmppt.pv_array import PVArray
+from ..pvmppt.data_manager import parse_depfie_csv
 
 
 pv_array_params = {

@@ -8,7 +8,7 @@ import matlab.engine
 import numpy as np
 from scipy.optimize import minimize
 
-from .matlab_api import set_parameters
+from pvmppt.matlab_api import set_parameters
 
 PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
@@ -20,7 +20,7 @@ class PVArray:
         self.voc = float(model_params["Voc"])
         self.eng = matlab.engine.start_matlab()
 
-        self._model_path = os.path.join("core", "matlab_model")
+        self._model_path = os.path.join("pvmppt", "matlab_model")
         self._model_name = os.path.basename(self._model_path)
         self._float_precision = float_precision
         self._running = False
@@ -79,7 +79,11 @@ class PVArray:
 
         set_parameters(self.eng, self._model_name, {"SimulationCommand": "start"})
 
+        self.eng.eval("pause(0.1)", nargout=0)
+
+        # print(self.eng.workspace)
         power = self.eng.eval("P(end);", nargout=1)
+        # power = self.eng.eval("P(length(P))", nargout=1)
         voltage = self.eng.eval("V(end);", nargout=1)
         current = self.eng.eval("I(end);", nargout=1)
 
@@ -187,8 +191,14 @@ class PVArray:
 
     def _init(self) -> None:
         self.eng.eval("beep off", nargout=0)
+        print('model = "{}";'.format(self._model_path))
         self.eng.eval('model = "{}";'.format(self._model_path), nargout=0)
         self.eng.eval("load_system(model)", nargout=0)
+        status = self.eng.eval(
+            f"get_param('{self._model_name}', 'SimulationStatus')", nargout=1
+        )
+        assert status == "stopped"
+        print(f"Status = {status}")
 
         set_parameters(self.eng, [self._model_name, "PV Array"], self.model_params)
         print("Model loaded succesfully.")

@@ -1,6 +1,6 @@
 import matlab.engine
 
-from ..core.matlab_api import compose_block_name, get_parameter, set_parameters
+from ..pvmppt.matlab_api import compose_block_name, get_parameter, set_parameters
 
 
 def test_compose_block_str():

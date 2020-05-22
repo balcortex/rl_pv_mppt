@@ -1,4 +1,4 @@
-from ..core.pv_array import PVArray
+from ..pvmppt.pv_array import PVArray
 
 pv_array_params = {
     "Npar": "1",

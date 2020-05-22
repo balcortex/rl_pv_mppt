@@ -12,8 +12,10 @@ def set_parameters(eng, blocks, params, nargout=0):
             for val in value:
                 param_list.append(key)
                 param_list.append(val)
+            # print(f"{block_name}, {param_list}, nargout={nargout}")
             eng.set_param(block_name, *param_list, nargout=nargout)
         else:
+            # print(f"{block_name}, {key}, {value}, nargout={nargout}")
             eng.set_param(block_name, key, value, nargout=nargout)
 
 
