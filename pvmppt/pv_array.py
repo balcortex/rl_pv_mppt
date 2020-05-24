@@ -83,7 +83,6 @@ class PVArray:
 
         # print(self.eng.workspace)
         power = self.eng.eval("P(end);", nargout=1)
-        # power = self.eng.eval("P(length(P))", nargout=1)
         voltage = self.eng.eval("V(end);", nargout=1)
         current = self.eng.eval("I(end);", nargout=1)
 
