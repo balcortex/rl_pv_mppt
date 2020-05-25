@@ -68,7 +68,6 @@ class PVEnv(py_environment.PyEnvironment):
     #     raise NotImplementedError
 
     def _reset(self) -> ts.StepType:
-        print("Reset()")
         v = v0 = self._v0 or np.random.randint(
             int(self.pvarray.voc * 0.8), self.pvarray.voc
         )
@@ -80,7 +79,7 @@ class PVEnv(py_environment.PyEnvironment):
         temperature = self.weather_df["Temperature"].iloc[0]
         # state = [v, p, delta_v, v_old, p_old, g, t]
         self._state = [v, p, delta_v, v0, p0, irradiance, temperature]
-        print(f"State: {self._state}")
+        print(f"Reset state: {self._state}")
         self._step_counter = 0
         self._episode_ended = False
 
@@ -95,10 +94,11 @@ class PVEnv(py_environment.PyEnvironment):
             return self._reset()
 
         delta_v = self._get_delta_v(action)
+        print(f"Action: {action}, dV: {delta_v}")
 
         v_old = self._state[0]
         p_old = self._state[1]
-        v = clip_var(v_old + action, 0, self.pvarray.voc)
+        v = clip_var(v_old + delta_v, 0, self.pvarray.voc)
 
         # weather_idx = np.random.randint(self.weather_df_len)
         g = self.weather_df["Irradiance"].iloc[self._step_counter]
@@ -122,9 +122,11 @@ class PVEnv(py_environment.PyEnvironment):
         if self._step_counter >= self._max_episode_steps:
             self._episode_ended = True
 
-        logging.debug(
-            f"Idx: {self._step_counter:3}, G: {g:4}, T: {t:5.2f}, V: {v:5.2f}, P: {p:7.2f}, dV: {delta_v:4.1f}, Rew: {reward:12.6f}"
-        )
+        # logging.debug(
+        #     f"Idx: {self._step_counter:3}, G: {g:4}, T: {t:5.2f}, V: {v:5.2f}, P: {p:7.2f}, dV: {delta_v:4.1f}, Rew: {reward:12.6f}"
+        # )
+
+        print(f"Step state: {self._state}")
 
         if self._episode_ended:
             return ts.termination(np.array(self._state, dtype=np.float32), reward)
@@ -177,6 +179,7 @@ class PVEnvDiscFullV0(PVEnv):
 
         print(f"Action spec: {self.action_spec()}")
         print(f"Obs space: {self.observation_spec()}")
+        print(f"Delta V: {self._v_eps}")
 
     def _get_delta_v(self, action: float) -> float:
         if action == 0:
@@ -209,6 +212,6 @@ if __name__ == "__main__":
 
     env = PVEnvDiscFullV0(pvarray, weather_df, discount=0.99)
 
-    validate_py_environment(env, episodes=5)
+    validate_py_environment(env, episodes=1)
 
     print("\n\nDONE")
