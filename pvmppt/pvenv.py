@@ -154,17 +154,17 @@ class PVEnvDiscFullV0(PVEnv):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
+        v_eps: float,
         discount: float = 1.0,
         max_episode_steps: Optional[int] = None,
         v0: Optional[float] = None,
         seed: Optional[int] = None,
-        v_eps: float = 0.01,
     ) -> None:
         super().__init__(
             pvarray, weather_df, discount, max_episode_steps, v0, seed, True,
         )
 
-        self._v_eps = v_eps * self.pvarray.voc
+        self._v_eps = v_eps
 
         self._action_spec = BoundedArraySpec(
             shape=(), dtype=np.int32, name="action", minimum=0, maximum=2,
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     weather_df_path = os.path.join("data", "toy_weather.csv")
     weather_df = parse_depfie_csv(weather_df_path)
 
-    env = PVEnvDiscFullV0(pvarray, weather_df, discount=0.99)
+    env = PVEnvDiscFullV0(pvarray, weather_df, v_eps=0.1, discount=0.99)
 
     validate_py_environment(env, episodes=1)
 

@@ -28,3 +28,4 @@ weather_df = parse_depfie_csv(os.path.join(os.getcwd(), "data", "toy_weather.csv
 def test_empty_env():
     with pytest.raises(NotImplementedError):
         pvenv = PVEnv(pvarray, weather_df)
+        print(pvenv)
