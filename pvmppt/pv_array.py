@@ -7,6 +7,7 @@ from typing import Dict, List
 import matlab.engine
 import numpy as np
 from scipy.optimize import minimize
+import logging
 
 from pvmppt.matlab_api import set_parameters
 
@@ -15,7 +16,7 @@ PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
 class PVArray:
     def __init__(self, model_params: Dict, float_precision: int = 3) -> None:
-        print("Starting MATLAB engine . . .")
+        logging.info("Starting MATLAB engine . . .")
         self.model_params = model_params
         self.voc = float(model_params["Voc"])
         self.eng = matlab.engine.start_matlab()
@@ -102,7 +103,7 @@ class PVArray:
         currents = []
 
         for (idx), (g, t) in enumerate(zip(irradiance, temperature)):
-            print(f"Idx: {idx}/{len(irradiance) - 1}", end=", ")
+            logging.debug(f"Idx: {idx}/{len(irradiance) - 1}", end=", ")
 
             result = self._get_true_mpp_cached(
                 round(g, float_precision), round(t, float_precision), ftol
@@ -111,7 +112,7 @@ class PVArray:
             voltages.append(round(result.voltage, float_precision))
             powers.append(round(result.power, float_precision))
             currents.append(round(result.current, float_precision))
-            print(f"Power = {powers[-1]}")
+            logging.debug(f"Power = {powers[-1]}")
 
         self._float_precision = float_precision
 
@@ -147,7 +148,7 @@ class PVArray:
         v = 0
 
         for (idx), (g, t) in enumerate(zip(irradiance, temperature)):
-            print(f"idx: {idx}/{len(irradiance) - 1}", end=", ")
+            logging.debug(f"idx: {idx}/{len(irradiance) - 1}", end=", ")
 
             if idx == 0:
                 sim_result = self.simulate(v0, g, t)
@@ -184,23 +185,23 @@ class PVArray:
             voltages.append(round(v0, self._float_precision))
             currents.append(round(i, self._float_precision))
             powers.append(round(p, self._float_precision))
-            print(f"Power = {powers[-1]}")
+            logging.debug(f"Power = {powers[-1]}")
 
         return PVSimResult(powers, voltages, currents)
 
     def _init(self) -> None:
         self.eng.eval("beep off", nargout=0)
-        print('model = "{}";'.format(self._model_path))
+        logging.debug('model = "{}";'.format(self._model_path))
         self.eng.eval('model = "{}";'.format(self._model_path), nargout=0)
         self.eng.eval("load_system(model)", nargout=0)
         status = self.eng.eval(
             f"get_param('{self._model_name}', 'SimulationStatus')", nargout=1
         )
         assert status == "stopped"
-        print(f"Status = {status}")
+        logging.debug(f"Status = {status}")
 
         set_parameters(self.eng, [self._model_name, "PV Array"], self.model_params)
-        print("Model loaded succesfully.")
+        logging.info("Model loaded succesfully.")
 
     def _prepare_for_step(self) -> None:
         set_parameters(
@@ -243,6 +244,9 @@ class PVArray:
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.DEBUG)
+
     pv_array_params = {
         "Npar": "1",
         "Nser": "1",

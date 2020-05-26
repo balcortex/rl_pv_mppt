@@ -47,13 +47,13 @@ class PVEnv(py_environment.PyEnvironment):
         self._action_spec = None
         self._observation_spec = None
 
-        print(f"Max episodes: {self._max_episode_steps}")
-        print(f"Discount: {self._discount}")
-        print(f"Reward normalizer {self._reward_normalizer}")
-        print(f"Initial V: {self._v0}")
-        print(f"Early end: {self._early_end}")
-        # print(f"Action spec: {self.action_spec()}")
-        # print(f"Obs space: {self.observation_spec()}")
+        logging.info(f"Max episodes: {self._max_episode_steps}")
+        logging.info(f"Discount: {self._discount}")
+        logging.info(f"Reward normalizer {self._reward_normalizer}")
+        logging.info(f"Initial V: {self._v0}")
+        logging.info(f"Early end: {self._early_end}")
+        # logging.info(f"Action spec: {self.action_spec()}")
+        # logging.info(f"Obs space: {self.observation_spec()}")
 
     def action_spec(self) -> BoundedArraySpec:
         return self._action_spec
@@ -71,15 +71,15 @@ class PVEnv(py_environment.PyEnvironment):
         v = v0 = self._v0 or np.random.randint(
             int(self.pvarray.voc * 0.8), self.pvarray.voc
         )
-        print(f"V0: {v0}")
-        print(f"Voc: {self.pvarray.voc}")
+        logging.debug(f"V0: {v0}")
+        logging.debug(f"Voc: {self.pvarray.voc}")
         p = p0 = 0.0
         delta_v = 0.0
         irradiance = self.weather_df["Irradiance"].iloc[0]
         temperature = self.weather_df["Temperature"].iloc[0]
         # state = [v, p, delta_v, v_old, p_old, g, t]
         self._state = [v, p, delta_v, v0, p0, irradiance, temperature]
-        print(f"Reset state: {self._state}")
+        logging.debug(f"Reset state: {self._state}")
         self._step_counter = 0
         self._episode_ended = False
 
@@ -89,12 +89,12 @@ class PVEnv(py_environment.PyEnvironment):
         raise NotImplementedError
 
     def _step(self, action) -> ts.StepType:
-        # print('Env Step')
+        # logging.debug('Env Step')
         if self._episode_ended:
             return self._reset()
 
         delta_v = self._get_delta_v(action)
-        print(f"Action: {action}, dV: {delta_v}")
+        logging.debug(f"Action: {action}, dV: {delta_v}")
 
         v_old = self._state[0]
         p_old = self._state[1]
@@ -126,7 +126,7 @@ class PVEnv(py_environment.PyEnvironment):
         #     f"Idx: {self._step_counter:3}, G: {g:4}, T: {t:5.2f}, V: {v:5.2f}, P: {p:7.2f}, dV: {delta_v:4.1f}, Rew: {reward:12.6f}"
         # )
 
-        print(f"Step state: {self._state}")
+        logging.debug(f"Step state: {self._state}")
 
         if self._episode_ended:
             return ts.termination(np.array(self._state, dtype=np.float32), reward)
@@ -177,9 +177,9 @@ class PVEnvDiscFullV0(PVEnv):
             maximum=[1e4, 1e4, self._v_eps, 1e4, 1e4, 1200, 50],
         )
 
-        print(f"Action spec: {self.action_spec()}")
-        print(f"Obs space: {self.observation_spec()}")
-        print(f"Delta V: {self._v_eps}")
+        logging.info(f"Action spec: {self.action_spec()}")
+        logging.info(f"Obs space: {self.observation_spec()}")
+        logging.info(f"Delta V: {self._v_eps}")
 
     def _get_delta_v(self, action: float) -> float:
         if action == 0:
@@ -191,7 +191,7 @@ class PVEnvDiscFullV0(PVEnv):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     pv_params = {
         "Npar": "1",
@@ -214,4 +214,4 @@ if __name__ == "__main__":
 
     validate_py_environment(env, episodes=1)
 
-    print("\n\nDONE")
+    logging.info("\n\nDONE")
