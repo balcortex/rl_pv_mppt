@@ -34,7 +34,7 @@ def train_eval(
     root_dir: str,
     num_iterations: int,
     # Params for QNetwork
-    fc_layer_params: Sequence[int] = (100,),
+    fc_layer_params: Sequence[int] = (20,),
     # Params for collect
     initial_collect_steps: int = 1000,
     collect_steps_per_iteration: int = 1,
@@ -52,7 +52,7 @@ def train_eval(
     gradient_clipping: bool = False,
     use_tf_functions: bool = True,
     # Params for eval
-    num_eval_episodes: int = 10,
+    num_eval_episodes: int = 1,
     eval_interval: int = 1000,
     # Params for checkpoints
     train_checkpoint_interval: int = 10_000,
@@ -110,7 +110,11 @@ def train_eval(
     # environments
     tf_env = tf_py_environment.TFPyEnvironment(
         PVEnvDiscFullV0(
-            pvarray=pvarray, weather_df=weather_df, v_eps=0.1, discount=discount
+            pvarray=pvarray,
+            weather_df=weather_df,
+            v_delta=0.1,
+            discount=discount,
+            # v0=25,
         )
     )
     eval_tf_env = tf_env
@@ -287,6 +291,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     # tf.compat.v1.enable_v2_behavior()
     # gin.parse_config_files_and_bindings(FLAGS.gin_file, FLAGS.gin_param)
+    # root_dir = os.path.join("trained_agents", "dqn", "001")
     train_eval(root_dir="run_test", num_iterations=200_000)
 
 

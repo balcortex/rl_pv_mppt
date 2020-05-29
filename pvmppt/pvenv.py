@@ -16,7 +16,7 @@ from pvmppt.pv_array import PVArray
 from pvmppt.utils import clip_var
 
 
-REWARD_NEG_POWER = -0.1
+REWARD_NEG_POWER = -200
 
 
 class PVEnv(py_environment.PyEnvironment):
@@ -46,6 +46,7 @@ class PVEnv(py_environment.PyEnvironment):
 
         self._action_spec = None
         self._observation_spec = None
+        self._step_counter = 0
 
         logging.info(f"Max episodes: {self._max_episode_steps}")
         logging.info(f"Discount: {self._discount}")
@@ -62,10 +63,11 @@ class PVEnv(py_environment.PyEnvironment):
         return self._observation_spec
 
     def _reset(self) -> ts.StepType:
-        v = v0 = self._v0 or np.random.randint(
-            int(self.pvarray.voc * 0.8), self.pvarray.voc
-        )
-        logging.debug(f"V0: {v0}")
+        # v = v0 = self._v0 or np.random.randint(
+        #     int(self.pvarray.voc * 0.8), self.pvarray.voc
+        # )
+        v = v0 = self._v0 or np.random.randint(0, self.pvarray.voc)
+        logging.info(f"V0: {v0}")
         logging.debug(f"Voc: {self.pvarray.voc}")
         p = p0 = 0.0
         delta_v = 0.0
@@ -74,6 +76,7 @@ class PVEnv(py_environment.PyEnvironment):
         # state = [v, p, delta_v, v_old, p_old, g, t]
         self._state = [v, p, delta_v, v0, p0, irradiance, temperature]
         logging.debug(f"Reset state: {self._state}")
+        logging.info(f"Step counter: {self._step_counter}")
         self._step_counter = 0
         self._episode_ended = False
 
@@ -135,7 +138,7 @@ class PVEnvDisc(PVEnv):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
-        v_eps: float,
+        v_delta: float,
         discount: float = 1.0,
         max_episode_steps: Optional[int] = None,
         v0: Optional[float] = None,
@@ -146,7 +149,7 @@ class PVEnvDisc(PVEnv):
             pvarray, weather_df, discount, max_episode_steps, v0, seed, early_end,
         )
 
-        self._v_eps = v_eps
+        self._v_delta = v_delta
 
         self._action_spec = BoundedArraySpec(
             shape=(), dtype=np.int32, name="action", minimum=0, maximum=2,
@@ -155,13 +158,13 @@ class PVEnvDisc(PVEnv):
             shape=(7,),
             dtype=np.float32,
             name="observation",
-            minimum=[0, 0, -self._v_eps, 0, 0, 0, 0],
-            maximum=[1e4, 1e4, self._v_eps, 1e4, 1e4, 1200, 50],
+            minimum=[0, 0, -self._v_delta, 0, 0, 0, 0],
+            maximum=[1e4, 1e4, self._v_delta, 1e4, 1e4, 1200, 50],
         )
 
         logging.info(f"Action spec: {self.action_spec()}")
         logging.info(f"Obs space: {self.observation_spec()}")
-        logging.info(f"Delta V: {self._v_eps}")
+        logging.info(f"Delta V: {self._v_delta}")
 
 
 class PVEnvDiscFullV0(PVEnvDisc):
@@ -169,9 +172,9 @@ class PVEnvDiscFullV0(PVEnvDisc):
     PV discrete environment with early end, and availability of all observations.
     
     Available actions:
-        0: decrement v_eps
+        0: decrement v_delta
         1: do nothing
-        2: increment v_eps
+        2: increment v_delta
     
     Observations:
         [v, p, delta_v, v_old, p_old, g, t]
@@ -182,23 +185,23 @@ class PVEnvDiscFullV0(PVEnvDisc):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
-        v_eps: float,
+        v_delta: float,
         discount: float = 1.0,
         max_episode_steps: Optional[int] = None,
         v0: Optional[float] = None,
         seed: Optional[int] = None,
     ) -> None:
         super().__init__(
-            pvarray, weather_df, v_eps, discount, max_episode_steps, v0, seed, True,
+            pvarray, weather_df, v_delta, discount, max_episode_steps, v0, seed, True,
         )
 
     def _get_delta_v(self, action: float) -> float:
         if action == 0:
-            return -self._v_eps
+            return -self._v_delta
         elif action == 1:
             return 0
         else:
-            return self._v_eps
+            return self._v_delta
 
 
 if __name__ == "__main__":
@@ -221,7 +224,7 @@ if __name__ == "__main__":
     weather_df_path = os.path.join("data", "toy_weather.csv")
     weather_df = parse_depfie_csv(weather_df_path)
 
-    env = PVEnvDiscFullV0(pvarray, weather_df, v_eps=0.1, discount=0.99)
+    env = PVEnvDiscFullV0(pvarray, weather_df, v_delta=0.1, discount=0.99)
 
     validate_py_environment(env, episodes=1)
 
