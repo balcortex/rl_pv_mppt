@@ -61,12 +61,6 @@ class PVEnv(py_environment.PyEnvironment):
     def observation_spec(self) -> BoundedArraySpec:
         return self._observation_spec
 
-    # def _set_action_spec(self) -> BoundedArraySpec:
-    #     raise NotImplementedError
-
-    # def _set_observation_spec(self) -> BoundedArraySpec:
-    #     raise NotImplementedError
-
     def _reset(self) -> ts.StepType:
         v = v0 = self._v0 or np.random.randint(
             int(self.pvarray.voc * 0.8), self.pvarray.voc
@@ -136,7 +130,41 @@ class PVEnv(py_environment.PyEnvironment):
             )
 
 
-class PVEnvDiscFullV0(PVEnv):
+class PVEnvDisc(PVEnv):
+    def __init__(
+        self,
+        pvarray: PVArray,
+        weather_df: pd.DataFrame,
+        v_eps: float,
+        discount: float = 1.0,
+        max_episode_steps: Optional[int] = None,
+        v0: Optional[float] = None,
+        seed: Optional[int] = None,
+        early_end: bool = True,
+    ) -> None:
+        super().__init__(
+            pvarray, weather_df, discount, max_episode_steps, v0, seed, early_end,
+        )
+
+        self._v_eps = v_eps
+
+        self._action_spec = BoundedArraySpec(
+            shape=(), dtype=np.int32, name="action", minimum=0, maximum=2,
+        )
+        self._observation_spec = BoundedArraySpec(
+            shape=(7,),
+            dtype=np.float32,
+            name="observation",
+            minimum=[0, 0, -self._v_eps, 0, 0, 0, 0],
+            maximum=[1e4, 1e4, self._v_eps, 1e4, 1e4, 1200, 50],
+        )
+
+        logging.info(f"Action spec: {self.action_spec()}")
+        logging.info(f"Obs space: {self.observation_spec()}")
+        logging.info(f"Delta V: {self._v_eps}")
+
+
+class PVEnvDiscFullV0(PVEnvDisc):
     """
     PV discrete environment with early end, and availability of all observations.
     
@@ -161,25 +189,8 @@ class PVEnvDiscFullV0(PVEnv):
         seed: Optional[int] = None,
     ) -> None:
         super().__init__(
-            pvarray, weather_df, discount, max_episode_steps, v0, seed, True,
+            pvarray, weather_df, v_eps, discount, max_episode_steps, v0, seed, True,
         )
-
-        self._v_eps = v_eps
-
-        self._action_spec = BoundedArraySpec(
-            shape=(), dtype=np.int32, name="action", minimum=0, maximum=2,
-        )
-        self._observation_spec = BoundedArraySpec(
-            shape=(7,),
-            dtype=np.float32,
-            name="observation",
-            minimum=[0, 0, -self._v_eps, 0, 0, 0, 0],
-            maximum=[1e4, 1e4, self._v_eps, 1e4, 1e4, 1200, 50],
-        )
-
-        logging.info(f"Action spec: {self.action_spec()}")
-        logging.info(f"Obs space: {self.observation_spec()}")
-        logging.info(f"Delta V: {self._v_eps}")
 
     def _get_delta_v(self, action: float) -> float:
         if action == 0:
@@ -191,7 +202,7 @@ class PVEnvDiscFullV0(PVEnv):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 
     pv_params = {
         "Npar": "1",
