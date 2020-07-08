@@ -1,20 +1,9 @@
-from pvmppt.pv_array import PVArray
+from src.pv_array import PVArray
+import logging
 
-pv_array_params = {
-    "Npar": "1",
-    "Nser": "1",
-    "Ncell": "54",
-    "Voc": "32.9",
-    "Isc": "8.21",
-    "Vm": "26.3",
-    "Im": "7.61",
-    "beta_Voc_pc": "-0.1230",
-    "alpha_Isc_pc": "0.0032",
-    "BAL": "on",
-    "Tc": "1e-6",
-}
+logging.basicConfig(level=logging.DEBUG)
 
-pv_array = PVArray(pv_array_params, float_precision=8)
+pv_array = PVArray(float_precision=8)
 
 
 def test_output():

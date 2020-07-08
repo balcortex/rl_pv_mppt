@@ -195,7 +195,7 @@ def train_eval(
     rb_checkpointer.initialize_or_restore()
     policy_checkpointer.initialize_or_restore()
 
-    def train_step():
+    def train_step_fn():
         experience, _ = next(iterator)
         return tf_agent.train(experience)
 
@@ -203,7 +203,9 @@ def train_eval(
     if use_tf_functions:
         collect_driver.run = common.function(collect_driver.run)
         tf_agent.train = common.function(tf_agent.train)
-        train_step = common.function(train_step)
+        train_step = common.function(train_step_fn)
+    else:
+        train_step = train_step_fn
 
     # Collect initial replay data
     logging.info(
@@ -235,6 +237,8 @@ def train_eval(
     policy_state = collect_policy.get_initial_state(tf_env.batch_size)
     timed_at_step = global_step.numpy()
     time_acc = 0
+    train_loss = None
+
     for _ in range(num_iterations):
         start_time = time.time()
         time_step, policy_state = collect_driver.run(
