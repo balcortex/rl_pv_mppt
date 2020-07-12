@@ -2,7 +2,6 @@
 
 import logging
 import os
-import matplotlib.pyplot as plt
 from collections import namedtuple
 import argparse
 import gin

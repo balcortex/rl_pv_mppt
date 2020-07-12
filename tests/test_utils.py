@@ -1,5 +1,5 @@
 import os
-from src.utils import read_weather_csv, clip_num
+from src.utils import read_weather_csv, clip_num, load_dict, save_dict
 
 
 def test_read_weather():
@@ -18,3 +18,17 @@ def test_clip_num():
     assert clip_num(-3, minimum=0) == 0
     assert clip_num(12, maximum=10) == 10
     assert clip_num(8, 0, 10) == 8
+
+
+def test_load_save():
+    dic = {
+        "a": 1,
+        "b": "2",
+        "c": [1, 2, 3],
+        "d": [1.0, 2.0, 3.0],
+        "e": {"1": "Uno", "2": "Dos"},
+    }
+    save_dict(dic, "temp.txt")
+    loaded_dic = load_dict("temp.txt")
+    assert dic == loaded_dic
+    os.remove("temp.txt")

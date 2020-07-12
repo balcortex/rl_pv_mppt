@@ -3,6 +3,7 @@ import os
 from collections import namedtuple
 from functools import lru_cache, partial
 from typing import Dict, List
+import json
 
 import matlab.engine
 from scipy.optimize import minimize
@@ -41,6 +42,9 @@ class PVArray:
         self._running = False
 
         self._init()
+
+    def __repr__(self) -> str:
+        return str(self.model_params)
 
     def step(
         self, load_voltage: float, irradiance: float, cell_temp: float

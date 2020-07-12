@@ -16,9 +16,9 @@ from tf_agents.policies import random_tf_policy
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils import common
 
-from pvmppt.data_manager import parse_depfie_csv
-from pvmppt.pv_array import PVArray
-from pvmppt.pvenv import PVEnvDiscFullV0
+from src.utils import read_weather_csv
+from src.pv_array import PVArray
+from src.pvenv import PVEnvDiscV0
 
 tf.compat.v1.train.AdamOptimizer(
     learning_rate=0.001,
@@ -103,13 +103,13 @@ def train_eval(
         },
         float_precision=3,
     )
-    weather_df = parse_depfie_csv(os.path.join("data", "toy_weather.csv"))
+    weather_df = read_weather_csv(os.path.join("data", "toy_weather.csv"))
 
     global_step = tf.compat.v1.train.get_or_create_global_step()
 
     # environments
     tf_env = tf_py_environment.TFPyEnvironment(
-        PVEnvDiscFullV0(
+        PVEnvDiscV0(
             pvarray=pvarray,
             weather_df=weather_df,
             v_delta=0.1,

@@ -1,4 +1,7 @@
+import json
 import os
+from typing import Dict
+import logging
 
 import numpy as np
 import pandas as pd
@@ -16,3 +19,15 @@ def clip_num(value: float, minimum: float = -np.inf, maximum: float = np.inf):
     "Clip the value between minimum and maximum parameters"
     return min(max(value, minimum), maximum)
 
+
+def save_dict(dic: Dict, path: str) -> None:
+    with open(path, "w") as f:
+        f.write(json.dumps(dic))
+    logging.info(f"Dictionary saved to {path}")
+
+
+def load_dict(path: str) -> Dict:
+    with open(path) as f:
+        dic = json.loads(f.read())
+    logging.info(f"Dictionary readed from {path}")
+    return dic
