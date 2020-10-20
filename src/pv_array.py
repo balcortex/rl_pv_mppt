@@ -23,6 +23,11 @@ class PVArray:
 
         self._init()
 
+    def __repr__(self) -> str:
+        return (
+            f"PVArray {float(self.params['Im']) * float(self.params['Vm']):.0f} Watts"
+        )
+
     def _init(self) -> None:
         "Load the model and initialize it"
         self._running = False

@@ -107,3 +107,10 @@ DEBUG 2020-08-28 20:00:15,990 [pv_array.py:get_true_mpp:144] Calculating true MP
 DEBUG 2020-08-28 20:00:15,990 [pv_array.py:get_true_mpp:154] MPP = 199.4804595, G = 1000, T = 25
 INFO 2020-10-19 20:22:22,453 [utils.py:save_dict:26] Dictionary saved to parameters\pvarray_01.json
 INFO 2020-10-19 20:23:08,069 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-19 21:57:28,065 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-19 21:57:28,066 [pv_array.py:__init__:19] Starting MATLAB engine . . .
+INFO 2020-10-19 21:59:53,866 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-19 21:59:53,868 [pv_array.py:__init__:19] Starting MATLAB engine . . .
+INFO 2020-10-19 22:01:17,893 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-19 22:01:17,895 [pv_array.py:__init__:19] Starting MATLAB engine . . .
+INFO 2020-10-19 22:01:54,811 [pv_array.py:_init:34] Model loaded succesfully.
