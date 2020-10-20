@@ -12,14 +12,14 @@ if __name__ == "__main__":
     ] * len(g)
 
     true = pvarray.get_true_mpp(g, t)
-    po = pvarray.get_po_mpp(g, t, v0=26, v_step=.26)
+    po = pvarray.get_po_mpp(g, t, v0=26, v_step=0.8)
 
-    plt.plot(true.power, label="True P")
-    plt.plot(po.power, label="PO P")
+    plt.plot(true.power, "o-", label="True P")
+    plt.plot(po.power, "o-", label="PO P")
     plt.legend()
     plt.show()
 
-    plt.plot(true.voltage, label="True V")
-    plt.plot(po.voltage, label="PO V")
+    plt.plot(true.voltage, "o", label="True V")
+    plt.plot(po.voltage, "o-", label="PO V")
     plt.legend()
     plt.show()

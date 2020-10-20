@@ -122,70 +122,34 @@ class PVArray:
         ), "irradiance and cell_temp lists must be the same length"
 
         logger.info(f"Running P&O, step={v_step} volts . . .")
-        pv_voltages, pv_powers, pv_currents = [], [], []
+        pv_voltages, pv_powers, pv_currents = [v0, v0], [0], []
 
-        v = v0
-        p0 = 0
         for g, t in tqdm(
             list(zip(irradiance, cell_temp)),
             desc="Calculating PO",
             ascii=True,
         ):
-
-            sim_result = self.simulate(v, g, t)
-            delta_v = v - v0
-            delta_p = sim_result.power - p0
-            p0 = sim_result.power
-            v0 = v
-
-            if delta_p == 0:
-                pass
-            else:
-                if delta_p > 0:
-                    if delta_v > 0:
-                        v += v_step
-                    else:
-                        v -= v_step
-                else:
-                    if delta_v > 0:
-                        v -= v_step
-                    else:
-                        v += v_step
-
-            pv_voltages.append(sim_result.voltage)
+            sim_result = self.simulate(pv_voltages[-1], g, t)
+            delta_v = pv_voltages[-1] - pv_voltages[-2]
+            delta_p = sim_result.power - pv_powers[-1]
             pv_powers.append(sim_result.power)
             pv_currents.append(sim_result.current)
 
-        return PVSimResult(pv_powers, pv_voltages, pv_currents)
+            if delta_p == 0:
+                pv_voltages.append(pv_voltages[-1])
+            else:
+                if delta_p > 0:
+                    if delta_v >= 0:
+                        pv_voltages.append(pv_voltages[-1] + v_step)
+                    else:
+                        pv_voltages.append(pv_voltages[-1] - v_step)
+                else:
+                    if delta_v >= 0:
+                        pv_voltages.append(pv_voltages[-1] - v_step)
+                    else:
+                        pv_voltages.append(pv_voltages[-1] + v_step)
 
-        #     v = pv_voltages[-1]
-        #     print(v)
-        #     p = pv_powers[-1]
-        #     sim_result = self.simulate(v, g, t)
-        #     print(sim_result)
-        #     delta_p = sim_result.power - p
-        #     delta_v = sim_result.voltage - v
-        #     print(f"v={v}, p=")
-
-        #     if not delta_p == 0:
-        #         if delta_p > 0:
-        #             if delta_v > 0:
-        #                 pv_voltages.append(v + v_step)
-        #             else:
-        #                 pv_voltages.append(v - v_step)
-        #         else:
-        #             if delta_v > 0:
-        #                 pv_voltages.append(v - v_step)
-        #             else:
-        #                 pv_voltages.append(v + v_step)
-        #     else:
-        #         pv_voltages.append(v)
-
-        #     print(pv_voltages)
-        #     pv_powers.append(sim_result.power)
-        #     pv_currents.append(sim_result.current)
-
-        # return PVSimResult(pv_powers[1:], pv_voltages[1:], pv_currents[1:])
+        return PVSimResult(pv_powers[1:], pv_voltages[1:-1], pv_currents)
 
     def _init(self) -> None:
         "Load the model and initialize it"
