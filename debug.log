@@ -114,3 +114,27 @@ INFO 2020-10-19 21:59:53,868 [pv_array.py:__init__:19] Starting MATLAB engine . 
 INFO 2020-10-19 22:01:17,893 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
 INFO 2020-10-19 22:01:17,895 [pv_array.py:__init__:19] Starting MATLAB engine . . .
 INFO 2020-10-19 22:01:54,811 [pv_array.py:_init:34] Model loaded succesfully.
+INFO 2020-10-20 08:22:51,156 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 08:22:51,158 [pv_array.py:__init__:19] Starting MATLAB engine . . .
+INFO 2020-10-20 08:23:48,944 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 08:23:48,945 [pv_array.py:__init__:19] Starting MATLAB engine . . .
+INFO 2020-10-20 08:24:24,396 [pv_array.py:_init:53] Model loaded succesfully.
+INFO 2020-10-20 09:05:09,966 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:05:47,489 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:06:07,177 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:06:30,859 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:07:22,392 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:08:02,272 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:08:33,437 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:08:42,884 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:09:11,278 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:09:32,371 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:10:06,252 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:14:20,639 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:15:10,136 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:18:21,212 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:18:27,964 [pv_array.py:get_true_mpp:69] Getting true MPP . . .
+INFO 2020-10-20 09:21:09,576 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 09:21:09,576 [pv_array.py:__init__:22] Starting MATLAB engine . . .
+INFO 2020-10-20 09:21:44,801 [pv_array.py:_init:108] Model loaded succesfully.
+INFO 2020-10-20 09:21:44,802 [pv_array.py:get_true_mpp:69] Getting true MPP . . .

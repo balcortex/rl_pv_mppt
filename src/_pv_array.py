@@ -11,7 +11,19 @@ from src.logger import logger
 
 PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
-p
+PV_ARRAY_DEFAULT_PARAMETERS = {
+    "Npar": "1",
+    "Nser": "1",
+    "Ncell": "54",
+    "Voc": "32.9",
+    "Isc": "8.21",
+    "Vm": "26.3",
+    "Im": "7.61",
+    "beta_Voc_pc": "-0.1230",
+    "alpha_Isc_pc": "0.0032",
+    "BAL": "on",
+    "Tc": "1e-6",
+}
 
 
 class PVArray:
@@ -19,7 +31,7 @@ class PVArray:
         self, model_params: Dict = PV_ARRAY_DEFAULT_PARAMETERS, float_precision: int = 3
     ) -> None:
         """PV Array Model, interface between MATLAB and Python
-        
+
         Params:
             model_params: dictionary with the array parameters
             float_precision: decimal places used by the model (for cache)
@@ -117,7 +129,7 @@ class PVArray:
         self, irradiance: List[float], temperature: List[float], ftol: float = 1e-06
     ) -> PVSimResult:
         """Get the real MPP for the specified inputs
-        
+
         Params:
             irradiance: solar irradiance [w/m^2]
             temperature: cell temperature [celsius]
