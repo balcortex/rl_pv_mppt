@@ -105,3 +105,5 @@ DEBUG 2020-08-28 20:00:15,989 [pv_array.py:_simulate_cached:120] Simulation comp
 DEBUG 2020-08-28 20:00:15,989 [pv_array.py:get_true_mpp:154] MPP = 162.83496903, G = 800, T = 25
 DEBUG 2020-08-28 20:00:15,990 [pv_array.py:get_true_mpp:144] Calculating true MPP for index: 4/4
 DEBUG 2020-08-28 20:00:15,990 [pv_array.py:get_true_mpp:154] MPP = 199.4804595, G = 1000, T = 25
+INFO 2020-10-19 20:22:22,453 [utils.py:save_dict:26] Dictionary saved to parameters\pvarray_01.json
+INFO 2020-10-19 20:23:08,069 [utils.py:load_dict:32] Dictionary readed from parameters\pvarray_01.json
