@@ -7,3 +7,4 @@ _examples
 .vscode
 *.autosave
 _old*
+debug.log

@@ -87,15 +87,15 @@ class PVEnv(py_environment.PyEnvironment):
 class PVEnvDiscV0(PVEnv):
     """
     PV discrete environment with availability of weather observations.
-    
+
     Available actions:
         0: decrement v_delta
         1: do nothing
         2: increment v_delta
-    
+
     Observations:
         [load voltage, irradiance, cell temperature]
-        
+
     """
 
     def __init__(
@@ -110,13 +110,23 @@ class PVEnvDiscV0(PVEnv):
         early_end: bool = True,
     ) -> None:
         super().__init__(
-            pvarray, weather_df, discount, max_episode_steps, v0, seed, early_end,
+            pvarray,
+            weather_df,
+            discount,
+            max_episode_steps,
+            v0,
+            seed,
+            early_end,
         )
 
         self._v_delta = v_delta
 
         self._action_spec = BoundedArraySpec(
-            shape=(), dtype=np.int32, name="action", minimum=0, maximum=2,
+            shape=(),
+            dtype=np.int32,
+            name="action",
+            minimum=0,
+            maximum=2,
         )
         self._observation_spec = BoundedArraySpec(
             shape=(3,),

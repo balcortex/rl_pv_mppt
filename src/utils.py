@@ -9,6 +9,7 @@ from src.logger import logger
 
 def read_weather_csv(path: str) -> pd.DataFrame:
     "Read a csv file and returns a DataFrame object"
+    logger.info(f"Reading {path} . . .")
     df = pd.read_csv(path)
     df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y %H:%M")
     df = df.set_index("Date")

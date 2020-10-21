@@ -1,13 +1,15 @@
-from typing import Dict, Union, List
-from src import utils
-from src.logger import logger
-import matlab.engine
 import os
 from collections import namedtuple
-from src.matlab_api import set_parameters
-from tqdm import tqdm
 from functools import partial
+from typing import Dict, List, Union
+
+import matlab.engine
 from scipy.optimize import minimize
+from tqdm import tqdm
+
+from src import utils
+from src.logger import logger
+from src.matlab_api import set_parameters
 
 PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
