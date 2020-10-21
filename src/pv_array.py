@@ -36,6 +36,9 @@ class PVArray:
 
         self._init()
 
+    def __del__(self):
+        self._eng.quit()
+
     def __repr__(self) -> str:
         return (
             f"PVArray {float(self.params['Im']) * float(self.params['Vm']):.0f} Watts"

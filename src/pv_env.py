@@ -33,9 +33,6 @@ class PVEnv(gym.Env):
     Parameters:
         - pvarray: the pvarray object
         - weather_df: a pandas dataframe object containing weather readings
-        - discount: discount future rewards
-            - 0: only account inmmediate reward
-            - 1: all rewards weighs the same
         - max_episode_steps: maximum number of steps in the episode
             - 0: the episode last until the dataframe is exhausted
         - v0: initial load voltage
@@ -50,7 +47,6 @@ class PVEnv(gym.Env):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
-        discount: float,
         max_episode_steps: int,
         seed: Optional[int] = None,
         reset_on_neg: bool = True,
@@ -60,7 +56,6 @@ class PVEnv(gym.Env):
         self.pvarray = pvarray
         self.weather = weather_df
         self.max_episode_steps = max_episode_steps
-        self.discount = discount
         self.reset_on_neg = reset_on_neg
 
         if seed:
@@ -106,7 +101,6 @@ class PVEnvDiscrete(PVEnv):
         pvarray: PVArray,
         weather_df: pd.DataFrame,
         v_delta: float,
-        discount: float,
         max_episode_steps: int,
         seed: Optional[int] = None,
         reset_on_neg: bool = True,
@@ -114,7 +108,6 @@ class PVEnvDiscrete(PVEnv):
         super().__init__(
             pvarray,
             weather_df,
-            discount,
             max_episode_steps,
             seed,
             reset_on_neg,
@@ -217,7 +210,6 @@ if __name__ == "__main__":
     pvenv = PVEnvDiscrete.from_file(
         pv_params_path=os.path.join("parameters", "pvarray_01.json"),
         weather_path=os.path.join("data", "weather_real_01.csv"),
-        discount=0.99,
         max_episode_steps=5,
         v_delta=0.1,
     )
