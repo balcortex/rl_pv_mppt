@@ -1,7 +1,8 @@
 import os
 from collections import namedtuple
-from functools import partial
+from functools import partial, lru_cache
 from typing import Dict, List, Union
+import matplotlib.pyplot as plt
 
 import matlab.engine
 from scipy.optimize import minimize
@@ -15,14 +16,16 @@ PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
 
 class PVArray:
-    def __init__(self, params: Dict):
+    def __init__(self, params: Dict, f_precision: int = 3):
         """PV Array Model, interface between MATLAB and Python
 
         Params:
             model_params: dictionary with the parameters
+            float_precision: decimal places used by the model (for cache)
         """
         logger.info("Starting MATLAB engine . . .")
         self._params = params
+        self.float_precision = f_precision
         self._eng = matlab.engine.start_matlab()
         self._model_path = os.path.join("src", "matlab_model")
 
@@ -44,16 +47,11 @@ class PVArray:
             irradiance: solar irradiance [W/m^2]
             temperature: cell temperature [celsius]
         """
-        self._set_voltage(voltage)
-        self._set_irradiance(irradiance)
-        self._set_cell_temp(cell_temp)
-        self._start_simulation()
-
-        pv_power = self._eng.eval("P(end);", nargout=1)
-        pv_voltage = self._eng.eval("V(end);", nargout=1)
-        pv_current = self._eng.eval("I(end);", nargout=1)
-
-        return PVSimResult(pv_power, pv_voltage, pv_current)
+        return self._simulate(
+            round(voltage, self.float_precision),
+            round(irradiance, self.float_precision),
+            round(cell_temp, self.float_precision),
+        )
 
     def get_true_mpp(
         self,
@@ -79,22 +77,22 @@ class PVArray:
 
         logger.info("Calculating true MPP . . .")
         pv_voltages, pv_powers, pv_currents = [], [], []
+        float_precision = self.float_precision
+        self.float_precision = 8
 
-        # Auxiliar function to maximize the power (scipy performs minimization)
-        neg_power_fn = lambda v, g, t: self.simulate(v[0], g, t)[0] * -1
         for g, t in tqdm(
             list(zip(irradiance, cell_temp)),
             desc="Calculating true MPP",
             ascii=True,
         ):
-            min_fn = partial(neg_power_fn, g=g, t=t)
-            optim_result = minimize(
-                min_fn, 0.8 * self.voc, method="SLSQP", options={"ftol": ftol}
+            result = self._get_true_mpp(
+                round(g, float_precision), round(t, float_precision), ftol
             )
-            assert optim_result.success == True
-            pv_voltages.append(optim_result.x[0])
-            pv_powers.append(optim_result.fun * -1)
-            pv_currents.append(pv_powers[-1] / pv_voltages[-1])
+            pv_voltages.append(round(result.voltage, float_precision))
+            pv_powers.append(round(result.power, float_precision))
+            pv_currents.append(round(result.current, float_precision))
+
+        self.float_precision = float_precision
 
         if len(pv_powers) == 1:
             return PVSimResult(pv_powers[0], pv_voltages[0], pv_currents[0])
@@ -162,6 +160,25 @@ class PVArray:
         set_parameters(self._eng, [self.model_name, "PV Array"], self.params)
         logger.info("Model loaded succesfully.")
 
+    @lru_cache(maxsize=None)
+    def _get_true_mpp(
+        self,
+        irradiance: float,
+        cell_temp: float,
+        ftol: float = 1e-06,
+    ) -> PVSimResult:
+        neg_power_fn = lambda v, g, t: self.simulate(v[0], g, t)[0] * -1
+        min_fn = partial(neg_power_fn, g=irradiance, t=cell_temp)
+        optim_result = minimize(
+            min_fn, 0.8 * self.voc, method="SLSQP", options={"ftol": ftol}
+        )
+        assert optim_result.success == True
+        v = optim_result.x[0]
+        p = optim_result.fun * -1
+        i = p / v
+
+        return PVSimResult(p, v, i)
+
     def _set_cell_temp(self, cell_temp: float) -> None:
         "Auxiliar function for setting the cell temperature on the Simulink model"
         set_parameters(
@@ -180,6 +197,26 @@ class PVArray:
             self._eng,
             [self.model_name, "Variable DC Source", "Load Voltage"],
             {"Value": str(voltage)},
+        )
+
+    @lru_cache(maxsize=None)
+    def _simulate(
+        self, voltage: float, irradiance: float, cell_temp: float
+    ) -> PVSimResult:
+        "Cached simulate function"
+        self._set_voltage(voltage)
+        self._set_irradiance(irradiance)
+        self._set_cell_temp(cell_temp)
+        self._start_simulation()
+
+        pv_power = self._eng.eval("P(end);", nargout=1)
+        pv_voltage = self._eng.eval("V(end);", nargout=1)
+        pv_current = self._eng.eval("I(end);", nargout=1)
+
+        return PVSimResult(
+            round(pv_power, self.float_precision),
+            round(pv_voltage, self.float_precision),
+            round(pv_current, self.float_precision),
         )
 
     def _start_simulation(self) -> None:
@@ -202,6 +239,25 @@ class PVArray:
         return os.path.basename(self._model_path)
 
     @classmethod
-    def from_json(cls, path: str):
+    def from_json(cls, path: str, **kwargs):
         "Create a PV Array from a json file containing a string with the parameters"
-        return cls(params=utils.load_dict(path))
+        return cls(params=utils.load_dict(path), **kwargs)
+
+
+if __name__ == "__main__":
+    pvarray = PVArray.from_json(os.path.join("parameters", "pvarray_01.json"))
+    g = [1000, 1000, 1000, 1000, 1000, 1000, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900] * 10
+    t = [25] * len(g)
+
+    real = pvarray.get_true_mpp(g, t)
+    po = pvarray.get_po_mpp(g, t, v0=25, v_step=0.26)
+
+    plt.plot(real.power, label="Real P")
+    plt.plot(po.power, label="PO P")
+    plt.legend()
+    plt.show()
+
+    plt.plot(real.voltage, label="Real V")
+    plt.plot(po.voltage, label="PO V")
+    plt.legend()
+    plt.show()

@@ -231,3 +231,37 @@ INFO 2020-10-20 20:27:31,104 [utils.py:load_dict:33] Dictionary readed from para
 INFO 2020-10-20 20:27:31,106 [pv_array.py:__init__:24] Starting MATLAB engine . . .
 INFO 2020-10-20 20:28:37,944 [pv_array.py:_init:163] Model loaded succesfully.
 INFO 2020-10-20 20:28:37,946 [utils.py:read_weather_csv:12] Reading data\weather_real_01.csv . . .
+INFO 2020-10-20 20:49:45,720 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 20:49:45,722 [pv_array.py:__init__:25] Starting MATLAB engine . . .
+INFO 2020-10-20 20:50:19,152 [pv_array.py:_init:160] Model loaded succesfully.
+INFO 2020-10-20 20:50:19,154 [utils.py:read_weather_csv:12] Reading data\weather_real_01.csv . . .
+INFO 2020-10-20 20:53:12,087 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:53:22,105 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:53:54,245 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:54:17,742 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:57:54,413 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:58:06,331 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 20:58:14,493 [pv_array.py:get_true_mpp:77] Calculating true MPP . . .
+INFO 2020-10-20 21:02:54,904 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:02:54,905 [<ipython-input-1-ac02757badab>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:03:37,972 [<ipython-input-1-ac02757badab>:_init:163] Model loaded succesfully.
+INFO 2020-10-20 21:03:37,973 [<ipython-input-1-ac02757badab>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:03:52,811 [<ipython-input-1-ac02757badab>:get_po_mpp:126] Running P&O, step=0.1 volts . . .
+INFO 2020-10-20 21:04:36,595 [<ipython-input-1-ac02757badab>:get_po_mpp:126] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:05:05,991 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:05:05,993 [<ipython-input-1-ac02757badab>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:05:58,916 [<ipython-input-1-ac02757badab>:_init:163] Model loaded succesfully.
+INFO 2020-10-20 21:05:58,918 [<ipython-input-1-ac02757badab>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:06:13,154 [<ipython-input-1-ac02757badab>:get_po_mpp:126] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:19:32,281 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:19:32,283 [<ipython-input-1-9ebf4f2120ca>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:20:10,629 [<ipython-input-1-9ebf4f2120ca>:_init:161] Model loaded succesfully.
+INFO 2020-10-20 21:20:10,630 [<ipython-input-1-9ebf4f2120ca>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:20:48,638 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:20:48,639 [<ipython-input-1-294386119873>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:21:25,386 [<ipython-input-1-294386119873>:_init:161] Model loaded succesfully.
+INFO 2020-10-20 21:21:25,388 [<ipython-input-1-294386119873>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:25:43,723 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:25:43,724 [<ipython-input-2-00a2ddcaf19a>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:26:22,574 [<ipython-input-2-00a2ddcaf19a>:_init:164] Model loaded succesfully.
+INFO 2020-10-20 21:26:22,576 [<ipython-input-2-00a2ddcaf19a>:get_true_mpp:81] Calculating true MPP . . .
