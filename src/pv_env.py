@@ -5,6 +5,9 @@ from gym.utils import seeding
 from typing import Optional
 import numpy as np
 import collections
+from dataclasses import dataclass, field
+import os
+import matplotlib.pyplot as plt
 
 from src.pv_array import PVArray
 from src.utils import load_dict, read_weather_csv
@@ -12,6 +15,15 @@ from src.utils import load_dict, read_weather_csv
 StepResult = collections.namedtuple(
     "StepResult", field_names=["obs", "reward", "done", "info"]
 )
+
+
+@dataclass
+class History:
+    irradiance: list = field(default_factory=list)
+    cell_temp: list = field(default_factory=list)
+    power: list = field(default_factory=list)
+    voltage: list = field(default_factory=list)
+    delta: list = field(default_factory=list)
 
 
 class PVEnv(gym.Env):
@@ -128,7 +140,15 @@ class PVEnvDiscrete(PVEnv):
         else:
             raise ValueError(f"action must be [0, 1, 2], received={action}")
 
+    def _add_history(self, p, v, g, t, dv) -> None:
+        self.history.power.append(p)
+        self.history.voltage.append(v)
+        self.history.irradiance.append(g)
+        self.history.cell_temp.append(t)
+        self.history.delta.append(dv)
+
     def reset(self) -> np.ndarray:
+        self.history = History()
         self.step_counter = 0
         self.step_idx = np.random.randint(0, len(self.weather) - self.max_episode_steps)
         self.done = False
@@ -137,6 +157,7 @@ class PVEnvDiscrete(PVEnv):
         g, t = self.weather[["Irradiance", "Temperature"]].iloc[self.step_idx]
 
         self.obs = [v, g, t]
+        self._add_history(p=np.NaN, v=v, g=g, t=t, dv=np.NaN)
         return np.array(self.obs)
 
     def step(self, action: int) -> StepResult:
@@ -159,9 +180,60 @@ class PVEnvDiscrete(PVEnv):
         if self.step_counter >= self.max_episode_steps:
             self.done = True
 
+        self._add_history(pv_sim_result.power, v, g, t, delta_v)
+
         return StepResult(
             self.obs,
             reward,
             self.done,
             {"step_idx": self.step_idx, "steps": self.step_counter},
         )
+
+    def render(self) -> None:
+        p_real, v_real, _ = self.pvarray.get_true_mpp(
+            self.history.irradiance, self.history.cell_temp
+        )
+        plt.subplot(2, 3, 1)
+        plt.plot(self.history.irradiance, label="Irradiance")
+        plt.legend()
+        plt.subplot(2, 3, 2)
+        plt.plot(self.history.cell_temp, label="Cell temperature")
+        plt.legend()
+        plt.subplot(2, 3, 3)
+        plt.plot(self.history.power, label="Power")
+        plt.plot(p_real, label="Max")
+        plt.legend()
+        plt.subplot(2, 3, 4)
+        plt.plot(self.history.voltage, label="Voltage")
+        plt.plot(v_real, label="Vmpp")
+        plt.legend()
+        plt.subplot(2, 3, 5)
+        plt.plot(self.history.delta, "o", label="Actions")
+        plt.legend()
+        plt.show()
+
+
+if __name__ == "__main__":
+    pvenv = PVEnvDiscrete.from_file(
+        pv_params_path=os.path.join("parameters", "pvarray_01.json"),
+        weather_path=os.path.join("data", "weather_real_01.csv"),
+        discount=0.99,
+        max_episode_steps=5,
+        v_delta=0.1,
+    )
+
+    obs = pvenv.reset()
+    while True:
+        action = pvenv.action_space.sample()
+        new_obs, reward, done, info = pvenv.step(action)
+        # print("obs", obs)
+        # print("action", action)
+        # print("new_obs", new_obs)
+        # print("reward", reward)
+        # print("done", done)
+        # print("info", info)
+
+        if done:
+            break
+
+    pvenv.render()
