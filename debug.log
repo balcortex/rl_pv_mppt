@@ -265,3 +265,49 @@ INFO 2020-10-20 21:25:43,723 [utils.py:load_dict:33] Dictionary readed from para
 INFO 2020-10-20 21:25:43,724 [<ipython-input-2-00a2ddcaf19a>:__init__:26] Starting MATLAB engine . . .
 INFO 2020-10-20 21:26:22,574 [<ipython-input-2-00a2ddcaf19a>:_init:164] Model loaded succesfully.
 INFO 2020-10-20 21:26:22,576 [<ipython-input-2-00a2ddcaf19a>:get_true_mpp:81] Calculating true MPP . . .
+INFO 2020-10-20 21:29:44,935 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:29:44,937 [<ipython-input-1-e6535b8d0c67>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:30:26,680 [<ipython-input-1-e6535b8d0c67>:_init:164] Model loaded succesfully.
+INFO 2020-10-20 21:30:26,681 [<ipython-input-1-e6535b8d0c67>:get_true_mpp:81] Calculating true MPP . . .
+INFO 2020-10-20 21:30:43,489 [<ipython-input-1-e6535b8d0c67>:get_po_mpp:127] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:33:43,649 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 21:33:43,650 [<ipython-input-2-45f3ac7d29d1>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-20 21:34:22,179 [<ipython-input-2-45f3ac7d29d1>:_init:161] Model loaded succesfully.
+INFO 2020-10-20 21:34:22,181 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:34:47,576 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:35:24,906 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:35:24,912 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:35:34,530 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:35:34,535 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:37:12,965 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:37:12,975 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:37:35,982 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:37:35,991 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-20 21:38:12,892 [<ipython-input-2-45f3ac7d29d1>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-20 21:38:12,901 [<ipython-input-2-45f3ac7d29d1>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-21 08:11:57,728 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:11:57,732 [<ipython-input-3-bbda34c107f2>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:13:02,888 [<ipython-input-3-bbda34c107f2>:_init:161] Model loaded succesfully.
+INFO 2020-10-21 08:13:02,888 [<ipython-input-3-bbda34c107f2>:get_true_mpp:78] Calculating true MPP . . .
+INFO 2020-10-21 08:14:21,294 [<ipython-input-3-bbda34c107f2>:get_po_mpp:124] Running P&O, step=0.26 volts . . .
+INFO 2020-10-21 08:27:29,324 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:27:29,328 [<ipython-input-1-28129fa9be2a>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:32:52,876 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:32:52,880 [<ipython-input-1-1e19455ae79d>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:35:43,521 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:35:43,524 [<ipython-input-1-8bb14b43547b>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:36:16,135 [<ipython-input-1-8bb14b43547b>:_init:166] Model loaded succesfully.
+INFO 2020-10-21 08:36:16,135 [<ipython-input-1-8bb14b43547b>:get_true_mpp:82] Calculating true MPP . . .
+INFO 2020-10-21 08:37:33,475 [<ipython-input-1-8bb14b43547b>:get_po_mpp:128] Running P&O, step=0.26 volts . . .
+INFO 2020-10-21 08:38:07,751 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:38:07,751 [<ipython-input-1-eb084f702a47>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:38:07,814 [<ipython-input-1-eb084f702a47>:__init__:35] MATLAB engine initializated.
+INFO 2020-10-21 08:38:10,318 [<ipython-input-1-eb084f702a47>:_init:167] Model loaded succesfully.
+INFO 2020-10-21 08:38:10,318 [<ipython-input-1-eb084f702a47>:get_true_mpp:83] Calculating true MPP . . .
+INFO 2020-10-21 08:38:52,634 [<ipython-input-1-eb084f702a47>:get_po_mpp:129] Running P&O, step=0.26 volts . . .
+INFO 2020-10-21 08:39:52,808 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-21 08:39:52,808 [<ipython-input-2-2158addc7275>:__init__:26] Starting MATLAB engine . . .
+INFO 2020-10-21 08:40:04,497 [<ipython-input-2-2158addc7275>:__init__:35] MATLAB engine initializated.
+INFO 2020-10-21 08:40:49,396 [<ipython-input-2-2158addc7275>:_init:167] Model loaded succesfully.
+INFO 2020-10-21 08:40:49,396 [<ipython-input-2-2158addc7275>:get_true_mpp:83] Calculating true MPP . . .
+INFO 2020-10-21 08:42:06,298 [<ipython-input-2-2158addc7275>:get_po_mpp:129] Running P&O, step=0.26 volts . . .

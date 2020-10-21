@@ -16,7 +16,7 @@ PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
 
 class PVArray:
-    def __init__(self, params: Dict, f_precision: int = 3):
+    def __init__(self, params: Dict, f_precision: int = 3, new_engine=False):
         """PV Array Model, interface between MATLAB and Python
 
         Params:
@@ -26,8 +26,13 @@ class PVArray:
         logger.info("Starting MATLAB engine . . .")
         self._params = params
         self.float_precision = f_precision
-        self._eng = matlab.engine.start_matlab()
         self._model_path = os.path.join("src", "matlab_model")
+
+        if new_engine:
+            self._eng = matlab.engine.start_matlab()
+        else:
+            self._eng = matlab.engine.connect_matlab()
+        logger.info("MATLAB engine initializated.")
 
         self._init()
 
@@ -154,6 +159,7 @@ class PVArray:
     def _init(self) -> None:
         "Load the model and initialize it"
         self._eng.eval("beep off", nargout=0)
+        self._eng.eval(f"cd '{os.getcwd()}'", nargout=0)
         self._eng.eval('model = "{}";'.format(self._model_path), nargout=0)
         self._eng.eval("load_system(model)", nargout=0)
         set_parameters(self._eng, self.model_name, {"StopTime": "1e-3"})
@@ -245,8 +251,10 @@ class PVArray:
 
 
 if __name__ == "__main__":
-    pvarray = PVArray.from_json(os.path.join("parameters", "pvarray_01.json"))
-    g = [1000, 1000, 1000, 1000, 1000, 1000, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900, 900] * 10
+    pvarray = PVArray.from_json(
+        os.path.join("parameters", "pvarray_01.json"), new_engine=False
+    )
+    g = [200, 400, 400, 600, 600, 800, 1000, 1000, 1000, 800, 800, 600, 400, 200] * 4
     t = [25] * len(g)
 
     real = pvarray.get_true_mpp(g, t)
