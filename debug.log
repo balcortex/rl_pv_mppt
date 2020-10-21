@@ -227,3 +227,7 @@ INFO 2020-10-20 20:03:37,221 [utils.py:load_dict:33] Dictionary readed from para
 INFO 2020-10-20 20:03:37,223 [pv_array.py:__init__:24] Starting MATLAB engine . . .
 INFO 2020-10-20 20:04:10,563 [pv_array.py:_init:163] Model loaded succesfully.
 INFO 2020-10-20 20:04:10,565 [utils.py:read_weather_csv:12] Reading data\weather_real_01.csv . . .
+INFO 2020-10-20 20:27:31,104 [utils.py:load_dict:33] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-20 20:27:31,106 [pv_array.py:__init__:24] Starting MATLAB engine . . .
+INFO 2020-10-20 20:28:37,944 [pv_array.py:_init:163] Model loaded succesfully.
+INFO 2020-10-20 20:28:37,946 [utils.py:read_weather_csv:12] Reading data\weather_real_01.csv . . .
