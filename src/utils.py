@@ -21,10 +21,11 @@ def clip_num(value: float, minimum: float = -np.inf, maximum: float = np.inf) ->
     return min(max(value, minimum), maximum)
 
 
-def save_dict(dic: Dict, path: str) -> None:
+def save_dict(dic: Dict, path: str, verbose: bool = True) -> None:
     with open(path, "w") as f:
         f.write(json.dumps(dic))
-    logger.info(f"Dictionary saved to {path}")
+    if verbose:
+        logger.info(f"Dictionary saved to {path}")
 
 
 def load_dict(path: str) -> Dict:

@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import matlab.engine
 from scipy.optimize import minimize
 from tqdm import tqdm
+from collections import defaultdict
+from typing import Optional
 
 from src import utils
 from src.logger import logger
@@ -16,7 +18,13 @@ PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
 
 class PVArray:
-    def __init__(self, params: Dict, f_precision: int = 3, new_engine=False):
+    def __init__(
+        self,
+        params: Dict,
+        f_precision: int = 3,
+        new_engine=False,
+        path: Optional[str] = None,
+    ):
         """PV Array Model, interface between MATLAB and Python
 
         Params:
@@ -27,6 +35,7 @@ class PVArray:
         self._params = params
         self.float_precision = f_precision
         self._model_path = os.path.join("src", "matlab_model")
+        self.params_path = path
 
         if new_engine:
             self._eng = matlab.engine.start_matlab()
@@ -35,8 +44,10 @@ class PVArray:
         logger.info("MATLAB engine initializated.")
 
         self._init()
+        self._init_history()
 
     def __del__(self):
+        self._save_history()
         self._eng.quit()
 
     def __repr__(self) -> str:
@@ -55,11 +66,19 @@ class PVArray:
             irradiance: solar irradiance [W/m^2]
             temperature: cell temperature [celsius]
         """
-        return self._simulate(
-            round(voltage, self.float_precision),
-            round(irradiance, self.float_precision),
-            round(cell_temp, self.float_precision),
-        )
+        v = round(voltage, self.float_precision)
+        g = round(irradiance, self.float_precision)
+        t = round(cell_temp, self.float_precision)
+
+        key = f"{v},{g},{t}"
+        if self.hist[key]:
+            result = PVSimResult(*self.hist[key])
+        else:
+            result = self._simulate(v, g, t)
+            self.hist[key] = result
+            self._save_history(verbose=False)
+
+        return result
 
     def get_true_mpp(
         self,
@@ -169,7 +188,19 @@ class PVArray:
         set_parameters(self._eng, [self.model_name, "PV Array"], self.params)
         logger.info("Model loaded succesfully.")
 
-    @lru_cache(maxsize=None)
+    def _init_history(self) -> None:
+        filename = os.path.basename(self.params_path)
+        self.hist_path = os.path.join("data", filename)
+
+        if os.path.exists(self.hist_path):
+            self.hist = defaultdict(lambda: None, utils.load_dict(self.hist_path))
+        else:
+            self.hist = defaultdict(lambda: None)
+
+    def _save_history(self, verbose: bool = True) -> None:
+        utils.save_dict(self.hist, self.hist_path, verbose=verbose)
+
+    # @lru_cache(maxsize=None)
     def _get_true_mpp(
         self,
         irradiance: float,
@@ -208,7 +239,7 @@ class PVArray:
             {"Value": str(voltage)},
         )
 
-    @lru_cache(maxsize=None)
+    # @lru_cache(maxsize=None)
     def _simulate(
         self, voltage: float, irradiance: float, cell_temp: float
     ) -> PVSimResult:
@@ -250,7 +281,7 @@ class PVArray:
     @classmethod
     def from_json(cls, path: str, **kwargs):
         "Create a PV Array from a json file containing a string with the parameters"
-        return cls(params=utils.load_dict(path), **kwargs)
+        return cls(params=utils.load_dict(path), path=path, **kwargs)
 
 
 if __name__ == "__main__":
