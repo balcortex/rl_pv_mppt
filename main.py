@@ -5,6 +5,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+import sys
+import time
 
 from src.agents import ActorCritic
 from src.networks import ActorCriticNetwork
@@ -17,18 +19,17 @@ PV_PARAMS_PATH = os.path.join("parameters", "pvarray_01.json")
 WEATHER_PATH = os.path.join("data", "weather_sim_01.csv")
 
 LEARNING_RATE = 1e-4
-ENTROPY_BETA = 0.01
+ENTROPY_BETA = 1e-3
 GAMMA = 0.99
 N_STEPS = 4
-BATCH_SIZE = 16
+BATCH_SIZE = 128
 
 if __name__ == "__main__":
-    env = None
     env = PVEnvDiscrete.from_file(
         PV_PARAMS_PATH,
         WEATHER_PATH,
         max_episode_steps=830,
-        v_delta=0.1,
+        v_delta=0.2,
     )
     device = torch.device("cpu")
     net = ActorCriticNetwork(
@@ -39,6 +40,8 @@ if __name__ == "__main__":
     exp_source = ExperienceSorceDiscountedSteps(
         env, agent, gamma=GAMMA, n_steps=N_STEPS, steps=BATCH_SIZE
     )
+
+    # sys.exit()
 
     total_rewards = []
     mean_rewards = []
@@ -52,7 +55,7 @@ if __name__ == "__main__":
     step_counter = 0
     mean_reward = np.NaN
 
-    for _ in tqdm(list(range(1000))):
+    for _ in tqdm(list(range(10000))):
         step_counter += 1
 
         batch_states = []
@@ -73,6 +76,7 @@ if __name__ == "__main__":
                 batch_dones.append(True)
                 batch_last_states.append(exp.state)  # we'll going to mask these anyway
 
+                # env.render()
                 ep_counter += 1
                 steps_per_episode = steps_per_episode_counter
 
@@ -123,12 +127,13 @@ if __name__ == "__main__":
         optimizer.step()
         loss = loss_total_t.item()
 
-        if step_counter % 10 == 0:
+        if step_counter % 200 == 0:
             print(
                 f"{step_counter}: loss={loss:.6f}, ",
                 f"mean reward={mean_reward:.2f}",
                 f"steps per episode={steps_per_episode:.1f}, " f"episodes={ep_counter}",
             )
+            env.render()
 
         # if mean_reward > 195:
         #     print(f"Solved in {step_counter} steps and {ep_counter} episodes")

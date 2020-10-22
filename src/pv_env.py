@@ -166,10 +166,10 @@ class PVEnvDiscrete(PVEnv):
         self.obs = [v, g, t]
         pv_sim_result = self.pvarray.simulate(*self.obs)
 
-        reward = pv_sim_result.power
+        reward = pv_sim_result.power / 200
         if pv_sim_result.power < 0:
             self.done = True
-            reward = 0
+            reward = -1
         if self.step_counter >= self.max_episode_steps:
             self.done = True
 
