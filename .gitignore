@@ -7,4 +7,3 @@ _examples
 .vscode
 *.autosave
 _old*
-.pylintrc
