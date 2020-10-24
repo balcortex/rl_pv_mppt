@@ -139,7 +139,7 @@ class DiscreteActorCritic(BasePolicy):
 
             self.optimizer.zero_grad()
             logits_t, values_t = self.net(states_t)
-            valuest_t = values_t.squeeze()
+            values_t = values_t.squeeze()
             loss_value_t = F.mse_loss(values_target_t, values_t)
 
             log_prob_actions_t = F.log_softmax(logits_t, dim=1)

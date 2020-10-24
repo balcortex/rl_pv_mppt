@@ -12,9 +12,9 @@ from src.agents import DiscreteActorCritic
 
 GAMMA = 0.99
 LEARNING_RATE = 0.001
-ENTROPY_BETA = 0.00
+ENTROPY_BETA = 0.01
 N_STEPS = 8
-BATCH_SIZE = 16
+BATCH_SIZE = 4
 
 
 if __name__ == "__main__":
@@ -34,8 +34,8 @@ if __name__ == "__main__":
         n_steps=N_STEPS,
         batch_size=BATCH_SIZE,
     )
-    agent.train(1000, verbose_every=0)
-    agent.plot_performance(['loss', 'mean_rewards'])
+    agent.train(1500, verbose_every=0)
+    agent.plot_performance(["loss", "mean_rewards"])
 
     # total_rewards = []
     # mean_rewards = []
