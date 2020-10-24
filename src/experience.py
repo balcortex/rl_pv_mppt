@@ -1,6 +1,6 @@
 import collections
 import gym
-from src.agents import BaseAgent
+from src.policies import BasePolicy
 
 Experience = collections.namedtuple(
     "Experience", ["state", "action", "reward", "last_state"]
@@ -12,9 +12,9 @@ ExperienceDiscounted = collections.namedtuple(
 
 
 class ExperienceSorce:
-    def __init__(self, env: gym.Env, agent: BaseAgent):
+    def __init__(self, env: gym.Env, policy: BasePolicy):
         self.env = env
-        self.agent = agent
+        self.policy = policy
         self.obs = self.env.reset()
         self.done = False
 
@@ -22,14 +22,14 @@ class ExperienceSorce:
         return self
 
     def __next__(self):
-        return self._play_step()
+        return self.play_step()
 
-    def _play_step(self):
+    def play_step(self):
         if self.done:
             self.obs = self.env.reset()
             self.done = False
         obs = self.obs
-        action = int(self.agent(obs, training=False)[0])
+        action = int(self.policy(obs, add_batch_dim=True))
         new_obs, reward, done, _ = self.env.step(action)
         if done:
             self.done = True
@@ -37,85 +37,48 @@ class ExperienceSorce:
         self.obs = new_obs
         return Experience(state=obs, action=action, reward=reward, last_state=new_obs)
 
-    def _play_episode(self):
+    def play_episode(self):
         ep_history = []
         self.obs = self.env.reset()
 
         while True:
-            experience = self._play_step()
+            experience = self.play_step()
             ep_history.append(experience)
 
             if experience.last_state is None:
                 return ep_history
 
-    def _play_episodes(self, episodes):
-        return [self._play_episode() for _ in range(episodes)]
-
-
-# class ExperienceSorce:
-#     def __init__(self, env: gym.Env, agent: BaseAgent):
-#         self.env = env
-#         self.agent = agent
-#         self.obs = self.env.reset()
-
-#     def __iter__(self):
-#         return self
-
-#     def __next__(self):
-#         return self._play_step()
-
-#     def _play_step(self):
-#         obs = self.obs
-#         action = int(self.agent(obs, training=False)[0])
-#         new_obs, reward, done, _ = self.env.step(action)
-#         if done:
-#             self.obs = self.env.reset()
-#             return Experience(state=obs, action=action, reward=reward, last_state=None)
-#         self.obs = new_obs
-#         return Experience(state=obs, action=action, reward=reward, last_state=new_obs)
-
-#     def _play_episode(self):
-#         ep_history = []
-#         self.obs = self.env.reset()
-
-#         while True:
-#             experience = self._play_step()
-#             ep_history.append(experience)
-
-#             if experience.last_state is None:
-#                 return ep_history
-
-#     def _play_episodes(self, episodes):
-#         return [self._play_episode() for _ in range(episodes)]
+    def play_episodes(self, episodes):
+        return [self.play_episode() for _ in range(episodes)]
 
 
 class ExperienceSorceEpisodes(ExperienceSorce):
-    def __init__(self, env: gym.Env, agent: BaseAgent, episodes: int):
-        super().__init__(env, agent)
+    def __init__(self, env: gym.Env, policy: BasePolicy, episodes: int):
+        super().__init__(env, policy)
 
         self.max_episodes = episodes
 
     def __next__(self):
-        return self._play_episodes(self.max_episodes)
+        return self.play_episodes(self.max_episodes)
 
 
 class ExperienceSorceDiscounted(ExperienceSorce):
-    def __init__(self, env: gym.Env, agent: BaseAgent, gamma: float, n_steps: int):
-        super().__init__(env, agent)
+    def __init__(self, env: gym.Env, policy: BasePolicy, gamma: float, n_steps: int):
+        super().__init__(env, policy)
 
         self.gamma = gamma
         self.max_steps = n_steps
 
     def __next__(self):
-        return self._play_n_steps()
+        return self.play_n_steps()
 
-    def _play_n_steps(self):
+    def play_n_steps(self):
         history = []
         discounted_reward = 0.0
         reward = 0.0
 
         for step_idx in range(self.max_steps):
-            exp = self._play_step()
+            exp = self.play_step()
             reward += exp.reward
             discounted_reward += exp.reward * self.gamma ** (step_idx)
             history.append(exp)
@@ -132,12 +95,12 @@ class ExperienceSorceDiscounted(ExperienceSorce):
             steps=step_idx + 1,
         )
 
-    def _play_episode(self):
+    def play_episode(self):
         ep_history = []
         self.obs = self.env.reset()
 
         while True:
-            experience = self._play_n_steps()
+            experience = self.play_n_steps()
             ep_history.append(experience)
 
             if experience.last_state is None:
@@ -148,31 +111,31 @@ class ExperienceSorceDiscountedSteps(ExperienceSorceDiscounted):
     def __init__(
         self,
         env: gym.Env,
-        agent: BaseAgent,
+        policy: BasePolicy,
         gamma: float,
         n_steps: int,
         steps: int,
     ):
-        super().__init__(env, agent, gamma, n_steps)
+        super().__init__(env, policy, gamma, n_steps)
 
         self.steps = steps
 
     def __next__(self):
-        return [self._play_n_steps() for _ in range(self.steps)]
+        return [self.play_n_steps() for _ in range(self.steps)]
 
 
 class ExperienceSorceDiscountedEpisodes(ExperienceSorceDiscounted):
     def __init__(
         self,
         env: gym.Env,
-        agent: BaseAgent,
+        policy: BasePolicy,
         gamma: float,
         n_steps: int,
         episodes: int,
     ):
-        super().__init__(env, agent, gamma, n_steps)
+        super().__init__(env, policy, gamma, n_steps)
 
         self.max_episodes = episodes
 
     def __next__(self):
-        return self._play_episodes(self.max_episodes)
+        return self.play_episodes(self.max_episodes)

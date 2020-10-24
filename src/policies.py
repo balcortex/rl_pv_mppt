@@ -16,7 +16,7 @@ class BasePolicy:
         raise NotImplementedError
 
 
-class CategoricalDistributionPolicy(BasePolicy):
+class DiscreteCategoricalDistributionPolicy(BasePolicy):
     """
     Sample actions from a given distribution
 
@@ -63,10 +63,10 @@ class CategoricalDistributionPolicy(BasePolicy):
         return probs_v
 
 
-class RandomPolicy(CategoricalDistributionPolicy):
+class DiscreteRandomPolicy(DiscreteCategoricalDistributionPolicy):
     """
     Sample actions randomly
-    
+
     Parameters:
         net: torch module to output the probabilities
         device: device where the calculations are performed ['cpu', 'cuda']
@@ -92,10 +92,10 @@ class RandomPolicy(CategoricalDistributionPolicy):
         return probs_v
 
 
-class GreedyPolicy(CategoricalDistributionPolicy):
+class DiscreteGreedyPolicy(DiscreteCategoricalDistributionPolicy):
     """
     Sample actions by taking the argmax operation
-    
+
     Parameters:
         net: torch module to output the probabilities
         device: device where the calculations are performed ['cpu', 'cuda']
