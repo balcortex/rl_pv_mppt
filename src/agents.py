@@ -26,11 +26,19 @@ class BasePolicy:
         self.hist_mean_rew = []
         self.hist_steps = []
         self.hist_total_loss = []
+        self.hist_entropy_loss = []
+        self.hist_value_loss = []
+        self.hist_policy_loss = []
         self.counter_ep = 0
         self.counter_steps_per_ep = 0
         self.counter_step = 0
         self.ep_reward = 0
-        self.loss = np.NaN
+        self.total_loss = np.NaN
+        self.policy_loss = np.NaN
+        self.entropy_loss = np.NaN
+        self.value_loss = np.NaN
+        self.mean_reward = np.NaN
+        self.steps_per_ep = np.NaN
 
 
 class DiscreteActorCritic(BasePolicy):
@@ -78,9 +86,6 @@ class DiscreteActorCritic(BasePolicy):
 
     def train(self, steps: int, verbose_every: Optional[int] = 0):
 
-        mean_reward = np.NaN
-        steps_per_ep = np.NaN
-
         for _ in tqdm(range(steps)):
             self.counter_step += 1
 
@@ -105,13 +110,16 @@ class DiscreteActorCritic(BasePolicy):
                     )  # as a placeholder, we'll mask this val
 
                     self.counter_ep += 1
-                    steps_per_ep = self.counter_steps_per_ep
+                    self.steps_per_ep = self.counter_steps_per_ep
 
                     self.hist_total_rew.append(self.ep_reward)
-                    mean_reward = np.mean(self.hist_total_rew[-100:])
-                    self.hist_mean_rew.append(mean_reward)
+                    self.mean_reward = np.mean(self.hist_total_rew[-100:])
+                    self.hist_mean_rew.append(self.mean_reward)
                     self.hist_steps.append(self.counter_step)
-                    self.hist_total_loss.append(self.loss)
+                    self.hist_total_loss.append(self.total_loss)
+                    self.hist_entropy_loss.append(self.entropy_loss)
+                    self.hist_value_loss.append(self.value_loss)
+                    self.hist_policy_loss.append(self.policy_loss)
 
                     self.ep_reward = 0
                     self.counter_steps_per_ep = 0
@@ -141,6 +149,7 @@ class DiscreteActorCritic(BasePolicy):
             logits_t, values_t = self.net(states_t)
             values_t = values_t.squeeze()
             loss_value_t = F.mse_loss(values_target_t, values_t)
+            self.value_loss = loss_value_t.item()
 
             log_prob_actions_t = F.log_softmax(logits_t, dim=1)
             log_prob_chosen = log_prob_actions_t.gather(
@@ -148,37 +157,48 @@ class DiscreteActorCritic(BasePolicy):
             ).squeeze()
             advantage_t = values_target_t - values_t.detach()
             loss_policy_t = (log_prob_chosen * advantage_t).mean()
+            self.policy_loss = loss_policy_t.item()
 
             prob_actions_t = F.softmax(logits_t, dim=1)
-            entropy_t = (prob_actions_t * log_prob_actions_t).sum(dim=1).mean()
-            loss_entropy_t = self.beta_entropy * entropy_t
+            entropy_t = -(prob_actions_t * log_prob_actions_t).sum(dim=1).mean()
+            loss_entropy_t = -self.beta_entropy * entropy_t
+            self.entropy_loss = loss_entropy_t.item()
 
             loss_total_t = -loss_policy_t + loss_value_t + loss_entropy_t
             loss_total_t.backward()
             self.optimizer.step()
-            self.loss = loss_total_t.item()
+            self.total_loss = loss_total_t.item()
 
             if verbose_every:
                 if self.counter_step % verbose_every == 0:
                     print(
-                        f"{self.counter_step}: loss={self.loss:.6f}, ",
-                        f"mean reward={mean_reward:.2f}, ",
-                        f"steps/ep={steps_per_ep}, ",
+                        f"{self.counter_step}: loss={self.total_loss:.6f}, ",
+                        f"mean reward={self.mean_reward:.2f}, ",
+                        f"steps/ep={self.steps_per_ep}, ",
                         f"episodes={self.counter_ep}",
                     )
 
-    def plot_performance(self, metrics: List[str]) -> None:
-        if "loss" in metrics:
-            plt.plot(self.hist_steps, self.hist_total_loss, label="Total loss")
-            plt.legend()
-            plt.show()
+    def plot_performance(
+        self,
+        metrics: List[str] = [
+            "mean_rewards",
+            "total_rewards",
+            "total_loss",
+            "policy_loss",
+            "value_loss",
+            "entropy_loss",
+        ],
+    ) -> None:
+        dic = {
+            "mean_rewards": self.hist_mean_rew,
+            "total_rewards": self.hist_total_rew,
+            "total_loss": self.hist_total_loss,
+            "policy_loss": self.hist_policy_loss,
+            "value_loss": self.hist_value_loss,
+            "entropy_loss": self.hist_entropy_loss,
+        }
 
-        if "mean_rewards" in metrics:
-            plt.plot(self.hist_steps, self.hist_mean_rew, label="Mean rewards")
-            plt.legend()
-            plt.show()
-
-        if "total_rewards" in metrics:
-            plt.plot(self.hist_steps, self.hist_total_rew, label="Total rewards")
+        for metric in metrics:
+            plt.plot(self.hist_steps, dic[metric], label=metric)
             plt.legend()
             plt.show()
