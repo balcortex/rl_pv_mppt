@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class ActorCriticNetwork(nn.Module):
+class DiscreteActorCriticNetwork(nn.Module):
     def __init__(self, input_size, n_actions):
         super().__init__()
 

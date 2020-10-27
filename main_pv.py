@@ -1,29 +1,31 @@
-import gym
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from tqdm import tqdm
+import os
 
+import torch
+
+from src.pv_env import PVEnv, PVEnvDiscrete
 from src.networks import DiscreteActorCriticNetwork
 from src.agents import DiscreteActorCritic
 
+PV_PARAMS_PATH = os.path.join("parameters", "pvarray_01.json")
+WEATHER_PATH = os.path.join("data", "weather_sim_01.csv")
 
-GAMMA = 0.99
 LEARNING_RATE = 0.01
 ENTROPY_BETA = 0.001
-N_STEPS = 8
+GAMMA = 0.99
+N_STEPS = 20
 BATCH_SIZE = 16
 
-
 if __name__ == "__main__":
-    env = gym.make("CartPole-v0")
+    env = PVEnvDiscrete.from_file(
+        PV_PARAMS_PATH,
+        WEATHER_PATH,
+        max_episode_steps=830,
+        v_delta=0.2,
+    )
     device = torch.device("cpu")
     net = DiscreteActorCriticNetwork(
-        env.observation_space.shape[0], env.action_space.n
+        input_size=env.observation_space.shape[0], n_actions=env.action_space.n
     ).to(device)
-
     agent = DiscreteActorCritic(
         env=env,
         net=net,
@@ -34,5 +36,5 @@ if __name__ == "__main__":
         n_steps=N_STEPS,
         batch_size=BATCH_SIZE,
     )
-    agent.train(800, verbose_every=100)
+    agent.train(steps=100, verbose_every=10)
     agent.plot_performance()

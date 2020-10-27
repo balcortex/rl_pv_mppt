@@ -123,6 +123,9 @@ class PVEnvDiscrete(PVEnv):
             dtype=np.float32,
         )
 
+    def __del__(self):
+        del self.pvarray
+
     def _get_delta_v(self, action: float) -> float:
         if action == 0:
             return -self.v_delta
@@ -176,7 +179,7 @@ class PVEnvDiscrete(PVEnv):
         self._add_history(pv_sim_result.power, v, g, t, delta_v)
 
         return StepResult(
-            self.obs,
+            np.array(self.obs),
             reward,
             self.done,
             {"step_idx": self.step_idx, "steps": self.step_counter},
