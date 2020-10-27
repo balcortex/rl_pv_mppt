@@ -172,6 +172,7 @@ class DiscreteActorCritic(BasePolicy):
             if verbose_every:
                 if self.counter_step % verbose_every == 0:
                     print(
+                        "\n",
                         f"{self.counter_step}: loss={self.total_loss:.6f}, ",
                         f"mean reward={self.mean_reward:.2f}, ",
                         f"steps/ep={self.steps_per_ep}, ",
