@@ -7,3 +7,4 @@ _examples
 .vscode
 *.autosave
 _old*
+src/matlab_model.slx.r2019a

@@ -76,3 +76,224 @@ INFO 2020-10-26 20:19:50,707 [utils.py:load_dict:34] Dictionary readed from data
 INFO 2020-10-26 20:19:50,709 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
 INFO 2020-10-26 20:21:28,520 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
 INFO 2020-10-26 20:21:53,804 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:38:27,374 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:38:27,377 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:38:27,517 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:38:29,890 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:38:29,931 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:38:29,933 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:40:56,423 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:40:56,425 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:40:56,502 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:40:59,265 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:40:59,271 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:40:59,274 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:42:35,576 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:43:47,616 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:43:47,618 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:43:47,680 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:43:49,881 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:43:49,885 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:43:49,887 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:45:18,870 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:46:23,273 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:46:23,276 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:46:23,360 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:46:25,915 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:46:25,921 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:46:25,923 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:47:03,427 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:50:21,356 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:50:21,360 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:50:21,440 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:50:24,041 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:50:24,047 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:50:24,050 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:50:46,783 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:51:25,188 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:51:25,189 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:51:25,270 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:51:27,464 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:51:27,493 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:51:27,495 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:54:33,559 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:54:33,561 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:54:33,604 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:54:34,959 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:54:34,970 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:54:34,971 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:54:58,703 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:57:59,868 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 20:57:59,870 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 20:57:59,913 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 20:58:01,292 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 20:58:01,306 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 20:58:01,308 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 20:58:50,729 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 20:59:02,376 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:00:18,273 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 21:00:18,274 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 21:00:18,315 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 21:00:19,600 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 21:00:19,616 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 21:00:19,617 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 21:21:00,152 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:23:15,233 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 21:23:15,237 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 21:23:15,324 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 21:23:17,843 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 21:23:17,943 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 21:23:17,944 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 21:23:26,745 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:23:36,495 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:23:45,785 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:23:54,132 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:24:02,755 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:24:12,008 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:26:48,461 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 21:26:48,463 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 21:26:48,515 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 21:26:50,156 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 21:26:50,161 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 21:26:50,163 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 21:30:47,657 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 21:30:47,659 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 21:30:47,696 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 21:30:48,997 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 21:30:49,024 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 21:30:49,026 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 21:32:47,871 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:35:04,110 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:36:33,414 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:37:07,064 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:37:34,669 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:38:07,028 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:38:25,168 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:38:47,044 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:39:11,357 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:39:37,434 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:40:01,465 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:40:28,350 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:40:52,211 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:41:17,113 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:41:41,286 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:59:08,348 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 21:59:08,350 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 21:59:08,470 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 21:59:10,507 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 21:59:10,528 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 21:59:10,529 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 21:59:27,113 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 21:59:48,468 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:00:03,854 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:00:19,548 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:00:51,474 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:01:08,118 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:01:25,830 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:01:46,058 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:02:04,719 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:02:23,348 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:02:42,359 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:03:01,499 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:03:21,989 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:03:42,130 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-26 22:05:04,623 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-26 22:05:04,624 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-26 22:05:04,692 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-26 22:05:06,022 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-26 22:05:06,044 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-26 22:05:06,046 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-26 22:08:46,474 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-27 18:00:45,014 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:00:45,015 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:00:45,231 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:00:48,965 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:00:48,992 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:00:48,994 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:01:25,992 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:01:25,994 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:01:26,040 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:01:27,525 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:01:27,532 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:01:27,534 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:05:35,235 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-27 18:10:30,000 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:10:30,002 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:10:30,057 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:10:31,422 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:10:31,439 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:10:31,440 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:11:38,242 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:11:38,244 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:11:38,338 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:11:40,017 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:11:40,026 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:11:40,027 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:16:06,354 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:16:06,355 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:16:06,407 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:16:08,009 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:16:08,024 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:16:08,026 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:17:14,686 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:17:14,688 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:17:14,734 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:17:16,354 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:17:16,362 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:17:16,364 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:21:17,553 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-27 18:22:09,302 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 18:22:09,304 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 18:22:09,346 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 18:22:10,779 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 18:22:10,808 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 18:22:10,810 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 18:56:00,096 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-10-27 19:08:09,725 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 19:08:09,726 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 19:08:15,596 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-10-27 19:08:15,598 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-10-27 19:08:15,642 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-10-27 19:08:17,197 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-10-27 19:08:17,216 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-10-27 19:08:17,218 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-10-27 21:29:29,428 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-11-03 19:56:14,532 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 19:56:14,533 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 19:56:20,964 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 19:58:33,478 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 19:58:33,480 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 19:58:33,508 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 19:58:52,540 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-11-03 19:58:52,556 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-11-03 19:58:52,558 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-11-03 20:16:26,632 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-11-03 20:55:01,046 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 20:55:01,048 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 20:55:01,080 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 20:55:02,393 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-11-03 20:55:02,408 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-11-03 20:55:02,410 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-11-03 20:56:09,530 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 20:56:09,531 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 20:56:09,565 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 20:56:10,618 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-11-03 20:56:10,622 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-11-03 20:56:10,624 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-11-03 20:58:36,297 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-11-03 20:59:37,101 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 20:59:37,102 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 20:59:42,439 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 20:59:42,440 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 20:59:42,469 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 20:59:43,505 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-11-03 20:59:43,510 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-11-03 20:59:43,512 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-11-03 21:02:19,812 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
+INFO 2020-11-03 21:02:50,231 [utils.py:load_dict:34] Dictionary readed from parameters\pvarray_01.json
+INFO 2020-11-03 21:02:50,233 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-03 21:02:50,266 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-03 21:02:51,351 [pv_array.py:_init:189] Model loaded succesfully.
+INFO 2020-11-03 21:02:51,365 [utils.py:load_dict:34] Dictionary readed from data\pvarray_01.json
+INFO 2020-11-03 21:02:51,366 [utils.py:read_weather_csv:12] Reading data\weather_sim_01.csv . . .
+INFO 2020-11-03 21:26:59,342 [pv_array.py:get_true_mpp:105] Calculating true MPP . . .
