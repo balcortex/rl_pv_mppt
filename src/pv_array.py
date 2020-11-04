@@ -265,8 +265,13 @@ class PVArray:
 
     @property
     def voc(self) -> float:
-        "Open-circuit voltage of the pv array"
+        "Nominal open-circuit voltage of the pv array"
         return float(self.params["Voc"])
+
+    @property
+    def pmax(self) -> float:
+        "Nominal maximum power output of the pv array"
+        return self.voc * float(self.params["Isc"])
 
     @property
     def params(self) -> Dict:
