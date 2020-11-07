@@ -2,7 +2,7 @@ import gym
 import pandas as pd
 from gym.envs.registration import EnvSpec
 from gym.utils import seeding
-from typing import Optional
+from typing import Optional, List
 import numpy as np
 import collections
 from dataclasses import dataclass, field
@@ -14,6 +14,7 @@ from src.utils import load_dict, read_weather_csv
 
 G_MAX = 1200
 T_MAX = 50
+NEG_REWARD = -100
 
 StepResult = collections.namedtuple(
     "StepResult", field_names=["obs", "reward", "done", "info"]
@@ -29,7 +30,7 @@ class History:
     delta: list = field(default_factory=list)
 
 
-class PVEnv(gym.Env):
+class PVEnvBase(gym.Env):
     """
     PV Environment abstract class for solving the MPPT by reinforcement learning
 
@@ -50,16 +51,16 @@ class PVEnv(gym.Env):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
-        max_episode_steps: int,
         seed: Optional[int] = None,
         reset_on_neg: bool = True,
+        normalize: bool = False,
     ):
         assert isinstance(weather_df, pd.DataFrame)
 
         self.pvarray = pvarray
         self.weather = weather_df
-        self.max_episode_steps = max_episode_steps
         self.reset_on_neg = reset_on_neg
+        self.normalize = normalize
 
         if seed:
             np.random.seed(seed)
@@ -79,23 +80,14 @@ class PVEnv(gym.Env):
         weather = read_weather_csv(weather_path)
         return cls(pvarray, weather, **kwargs)
 
-    # @property
-    # def max_episode_steps(self) -> int:
-    #     # return self._max_episode_steps or len(self.weather)
-    #     return self._max_episode_steps
 
-
-class PVEnvDiscrete(PVEnv):
+class PVEnv(PVEnvBase):
     """
-    PV discrete environment with availability of weather observations.
-
-    Available actions:
-        0: decrement v_delta
-        1: do nothing
-        2: increment v_delta
+    PV environment with availability of all observations.
+    Continuos actions
 
     Observations:
-        [voltage, irradiance, cell temperature]
+        [power, voltage, irradiance, cell temperature]
 
     """
 
@@ -103,41 +95,33 @@ class PVEnvDiscrete(PVEnv):
         self,
         pvarray: PVArray,
         weather_df: pd.DataFrame,
-        v_delta: float,
-        max_episode_steps: int,
         seed: Optional[int] = None,
         reset_on_neg: bool = True,
+        normalize: bool = False,
     ) -> None:
         super().__init__(
             pvarray,
             weather_df,
-            max_episode_steps,
             seed,
             reset_on_neg,
+            normalize,
         )
 
-        self.v_delta = v_delta
-
-        self.action_space = gym.spaces.Discrete(3)
+        self.action_space = gym.spaces.Box(
+            low=-10,
+            high=10,
+            shape=(1,),
+            dtype=np.float32,
+        )
         self.observation_space = gym.spaces.Box(
-            low=np.array([0, 0, 0]),
-            high=np.array([self.pvarray.voc, G_MAX, T_MAX]),
-            shape=(3,),
+            low=np.array([-np.inf, 0, 0, 0]),
+            high=np.array([self.pvarray.pmax, self.pvarray.voc, G_MAX, T_MAX]),
+            shape=(4,),
             dtype=np.float32,
         )
 
-    def __del__(self):
-        del self.pvarray
-
     def _get_delta_v(self, action: float) -> float:
-        if action == 0:
-            return -self.v_delta
-        elif action == 1:
-            return 0.0
-        elif action == 2:
-            return self.v_delta
-        else:
-            raise ValueError(f"action must be [0, 1, 2], received={action}")
+        return int(action)
 
     def _add_history(self, p, v, g, t, dv) -> None:
         self.history.power.append(p)
@@ -149,17 +133,23 @@ class PVEnvDiscrete(PVEnv):
     def reset(self) -> np.ndarray:
         self.history = History()
         self.step_counter = 0
-        self.step_idx = np.random.randint(0, len(self.weather) - self.max_episode_steps)
+        self.step_idx = 0
         self.done = False
 
         v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
         g, t = self.weather[["Irradiance", "Temperature"]].iloc[self.step_idx]
+        p, *_ = self.pvarray.simulate(v, g, t)
 
-        self.obs = [v, g, t]
-        self._add_history(p=np.NaN, v=v, g=g, t=t, dv=np.NaN)
-        return np.array(self.obs)
+        self.obs = [p, v, g, t]
+        self._add_history(p=p, v=v, g=g, t=t, dv=np.NaN)
 
-    def step(self, action: int) -> StepResult:
+        obs = np.array(self.obs)
+        if self.normalize:
+            obs /= np.array([self.pvarray.pmax, self.pvarray.voc, G_MAX, T_MAX])
+
+        return obs
+
+    def step(self, action: float) -> StepResult:
         if self.done:
             raise ValueError("The episode is done")
 
@@ -167,22 +157,26 @@ class PVEnvDiscrete(PVEnv):
         self.step_counter += 1
 
         delta_v = self._get_delta_v(action)
-        v = np.clip(self.obs[0] + delta_v, 0, self.pvarray.voc)
+        v = np.clip(self.obs[1] + delta_v, 0, self.pvarray.voc)
         g, t = self.weather[["Irradiance", "Temperature"]].iloc[self.step_idx]
-        self.obs = [v, g, t]
-        pv_sim_result = self.pvarray.simulate(*self.obs)
+        p, *_ = self.pvarray.simulate(v, g, t)
+        self.obs = [p, v, g, t]
 
-        reward = pv_sim_result.power / self.pvarray.pmax
-        if pv_sim_result.power < 0 or v < 1:
+        reward = p / self.pvarray.pmax
+        if p < 0 or v < 1:
             self.done = True
-            reward = -1
-        if self.step_counter >= self.max_episode_steps:
+            reward = NEG_REWARD
+        if self.step_counter >= len(self.weather) - 1:
             self.done = True
 
-        self._add_history(pv_sim_result.power, v, g, t, delta_v)
+        self._add_history(p, v, g, t, delta_v)
+
+        obs = np.array(self.obs)
+        if self.normalize:
+            obs /= np.array([self.pvarray.pmax, self.pvarray.voc, G_MAX, T_MAX])
 
         return StepResult(
-            np.array(self.obs),
+            obs,
             reward,
             self.done,
             {"step_idx": self.step_idx, "steps": self.step_counter},
@@ -212,166 +206,162 @@ class PVEnvDiscrete(PVEnv):
         plt.show()
 
 
-class PVEnvDiscreteV1(PVEnvDiscrete):
-    def reset(self) -> np.ndarray:
-        obs = super().reset() * (1 / np.array([self.pvarray.voc, G_MAX, T_MAX]))
-        return np.array(obs)
+class PVEnvDiscrete(PVEnv):
+    """
+    Discrete environment
 
-    def step(self, action: int) -> StepResult:
-        result = super().step(action)
-        obs = result.obs * (1 / np.array([self.pvarray.voc, G_MAX, T_MAX]))
-        return StepResult(np.array(obs), result.reward, result.done, result.info)
+    Observations:
+    [power, voltage, irradiance, cell temperature]
+    """
+
+    def __init__(
+        self,
+        pvarray: PVArray,
+        weather_df: pd.DataFrame,
+        seed: Optional[int] = None,
+        reset_on_neg: bool = True,
+        normalize: bool = False,
+        actions: List[float] = [-0.1, 0.0, 0.1],
+    ) -> None:
+        super().__init__(
+            pvarray,
+            weather_df,
+            seed,
+            reset_on_neg,
+            normalize,
+        )
+
+        self.actions = actions
+        self.action_space = gym.spaces.Discrete(len(actions))
+
+    def _get_delta_v(self, action: int) -> float:
+        return self.actions[action]
 
 
-# class PVEnvDiscreteV1(PVEnv):
-#     """
-#     PV discrete environment with availability of weather observations.
-#     Normalized
+class PVEnvDiscreteDiffV1(PVEnvDiscrete):
+    """
+    Discrete environment
 
-#     Available actions:
-#         0: decrement v_delta
-#         1: do nothing
-#         2: increment v_delta
+    Observations:
+    [delta_p, delta_v, v, irradiance, cell temperature]
+    """
 
-#     Observations:
-#         [voltage, delta_v, power, irradiance, cell temperature]
+    def __init__(
+        self,
+        pvarray: PVArray,
+        weather_df: pd.DataFrame,
+        seed: Optional[int] = None,
+        reset_on_neg: bool = True,
+        normalize: bool = False,
+        actions: List[float] = [-0.1, 0.0, 0.1],
+    ) -> None:
+        super().__init__(
+            pvarray,
+            weather_df,
+            seed,
+            reset_on_neg,
+            normalize,
+            actions,
+        )
 
-#     """
+        self.observation_space = gym.spaces.Box(
+            low=np.array([-np.inf] * 5),
+            high=np.array([np.inf] * 5),
+            shape=(5,),
+            dtype=np.float32,
+        )
 
-#     def __init__(
-#         self,
-#         pvarray: PVArray,
-#         weather_df: pd.DataFrame,
-#         v_delta: float,
-#         max_episode_steps: int,
-#         seed: Optional[int] = None,
-#         reset_on_neg: bool = True,
-#     ) -> None:
-#         super().__init__(
-#             pvarray,
-#             weather_df,
-#             max_episode_steps,
-#             seed,
-#             reset_on_neg,
-#         )
+    def reset(self):
+        self.obs_delta = super().reset()
+        return np.array(
+            [0.0, 0.0, self.obs_delta[1], self.obs_delta[2], self.obs_delta[3]]
+        )
 
-#         self.v_delta = v_delta
+    def step(self, action: float):
+        obs, reward, done, info = super().step(action)
 
-#         self.action_space = gym.spaces.Discrete(3)
-#         self.observation_space = gym.spaces.Box(
-#             low=np.array([0, -self.v_delta, -np.inf, 0, 0]),
-#             high=np.array([self.pvarray.voc, self.v_delta, np.inf, 1200, 50]),
-#             shape=(5,),
-#             dtype=np.float32,
-#         )
+        delta_p = obs[0] - self.obs_delta[0]
+        delta_v = obs[1] - self.obs_delta[1]
 
-#     def __del__(self):
-#         del self.pvarray
+        self.obs_delta = obs
 
-#     def _get_delta_v(self, action: float) -> float:
-#         if action == 0:
-#             return -self.v_delta
-#         elif action == 1:
-#             return 0.0
-#         elif action == 2:
-#             return self.v_delta
-#         else:
-#             raise ValueError(f"action must be [0, 1, 2], received={action}")
+        return np.array([delta_p, delta_v, obs[1], obs[2], obs[3]]), reward, done, info
 
-#     def _add_history(self, p, v, g, t, dv) -> None:
-#         self.history.power.append(p)
-#         self.history.voltage.append(v)
-#         self.history.irradiance.append(g)
-#         self.history.cell_temp.append(t)
-#         self.history.delta.append(dv)
 
-#     def reset(self) -> np.ndarray:
-#         self.history = History()
-#         self.step_counter = 0
-#         self.step_idx = np.random.randint(0, len(self.weather) - self.max_episode_steps)
-#         self.done = False
+class PVEnvDiscreteDiffV2(PVEnvDiscreteDiffV1):
+    """
+    Discrete environment
 
-#         v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
-#         g, t = self.weather[["Irradiance", "Temperature"]].iloc[self.step_idx]
-#         result = self.pvarray.simulate(v, g, t)
+    Observations:
+    [delta_p, delta_v]
+    """
 
-#         self.obs = [v / 50, 0, result.power / 200, g / 1200, t / 50]
-#         self._add_history(p=np.NaN, v=v, g=g, t=t, dv=np.NaN)
-#         return np.array(self.obs)
+    def __init__(
+        self,
+        pvarray: PVArray,
+        weather_df: pd.DataFrame,
+        seed: Optional[int] = None,
+        reset_on_neg: bool = True,
+        normalize: bool = False,
+        actions: List[float] = [-0.1, 0.0, 0.1],
+    ) -> None:
+        super().__init__(
+            pvarray,
+            weather_df,
+            seed,
+            reset_on_neg,
+            normalize,
+            actions,
+        )
 
-#     def step(self, action: int) -> StepResult:
-#         if self.done:
-#             raise ValueError("The episode is done")
+        self.observation_space = gym.spaces.Box(
+            low=np.array([-np.inf] * 2),
+            high=np.array([np.inf] * 2),
+            shape=(2,),
+            dtype=np.float32,
+        )
 
-#         self.step_idx += 1
-#         self.step_counter += 1
+    def reset(self):
+        obs = super().reset()
+        return np.array([obs[0], obs[1]])
 
-#         delta_v = self._get_delta_v(action)
-#         v = np.clip(self.obs[0] * 50 + delta_v, 0, self.pvarray.voc)
-#         g, t = self.weather[["Irradiance", "Temperature"]].iloc[self.step_idx]
-#         pv_sim_result = self.pvarray.simulate(v, g, t)
-#         self.obs = [v / 50, delta_v, pv_sim_result.power / 200, g / 1200, t / 50]
+    def step(self, action: float):
+        obs, _, done, info = super().step(action)
 
-#         reward = pv_sim_result.power / 200
-#         if pv_sim_result.power < 0 or v < 1:
-#             self.done = True
-#             reward = -1
-#         if self.step_counter >= self.max_episode_steps:
-#             self.done = True
+        if obs[0] < -1:
+            reward = -1
+        elif obs[0] >= -1 and obs[0] < 1:
+            reward = 0
+        else:
+            reward = 0.1
 
-#         self._add_history(pv_sim_result.power, v, g, t, delta_v)
+        return np.array([obs[0], obs[1]]), reward, done, info
 
-#         return StepResult(
-#             np.array(self.obs),
-#             reward,
-#             self.done,
-#             {"step_idx": self.step_idx, "steps": self.step_counter},
-#         )
+    # def reset(self) -> np.ndarray:
+    #     obs = super().reset() * (1 / np.array([self.pvarray.voc, G_MAX, T_MAX]))
+    #     return np.array(obs)
 
-#     def render(self) -> None:
-#         p_real, v_real, _ = self.pvarray.get_true_mpp(
-#             self.history.irradiance, self.history.cell_temp
-#         )
-#         plt.subplot(2, 3, 1)
-#         plt.plot(self.history.irradiance, label="Irradiance")
-#         plt.legend()
-#         plt.subplot(2, 3, 2)
-#         plt.plot(self.history.cell_temp, label="Cell temperature")
-#         plt.legend()
-#         plt.subplot(2, 3, 3)
-#         plt.plot(self.history.power, label="Power")
-#         plt.plot(p_real, label="Max")
-#         plt.legend()
-#         plt.subplot(2, 3, 4)
-#         plt.plot(self.history.voltage, label="Voltage")
-#         plt.plot(v_real, label="Vmpp")
-#         plt.legend()
-#         plt.subplot(2, 3, 5)
-#         plt.plot(self.history.delta, "o", label="Actions")
-#         plt.legend()
-#         plt.show()
+    # def step(self, action: int) -> StepResult:
+    #     result = super().step(action)
+    #     obs = result.obs * (1 / np.array([self.pvarray.voc, G_MAX, T_MAX]))
+    #     return StepResult(np.array(obs), result.reward, result.done, result.info)
 
 
 if __name__ == "__main__":
-    pvenv = PVEnvDiscrete.from_file(
+
+    env = PVEnvDiscreteDiffV1.from_file(
         pv_params_path=os.path.join("parameters", "pvarray_01.json"),
-        weather_path=os.path.join("data", "weather_real_01.csv"),
-        max_episode_steps=5,
-        v_delta=0.1,
+        weather_path=os.path.join("data", "weather_sim_01.csv"),
+        normalize=True,
+        actions=[-0.1, 0, 0.1],
     )
 
-    obs = pvenv.reset()
-    while True:
-        action = pvenv.action_space.sample()
-        new_obs, reward, done, info = pvenv.step(action)
-        # print("obs", obs)
-        # print("action", action)
-        # print("new_obs", new_obs)
-        # print("reward", reward)
-        # print("done", done)
-        # print("info", info)
+    obs = env.reset()
+    # while True:
+    #     action = env.action_space.sample()
+    #     new_obs, reward, done, info = env.step(action)
 
-        if done:
-            break
+    #     if done:
+    #         break
 
-    pvenv.render()
+    # env.render()
