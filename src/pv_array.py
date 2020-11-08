@@ -22,7 +22,7 @@ class PVArray:
         self,
         params: Dict,
         f_precision: int = 3,
-        new_engine=False,
+        new_engine=True,
         path: Optional[str] = None,
     ):
         """PV Array Model, interface between MATLAB and Python
@@ -269,9 +269,14 @@ class PVArray:
         return float(self.params["Voc"])
 
     @property
+    def isc(self) -> float:
+        "Nominal short-circuit current of the pv array"
+        return float(self.params["Isc"])
+
+    @property
     def pmax(self) -> float:
         "Nominal maximum power output of the pv array"
-        return self.voc * float(self.params["Isc"])
+        return self.voc * self.isc
 
     @property
     def params(self) -> Dict:

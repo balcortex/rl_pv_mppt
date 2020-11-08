@@ -2,7 +2,7 @@ import os
 
 import torch
 
-from src.pv_env import PVEnvDiscrete, PVEnvDiscreteDiffV1, PVEnvDiscreteDiffV2
+from src.pv_env import History, PVEnvDiscrete
 from src.networks import DiscreteActorCriticNetwork
 from src.agents import DiscreteActorCritic
 
@@ -16,10 +16,30 @@ N_STEPS = 4
 BATCH_SIZE = 16
 
 if __name__ == "__main__":
-    env = PVEnvDiscreteDiffV2.from_file(
+
+    def reward_fn1(history: History) -> float:
+        dp = history.dp[-1]
+
+        if dp < -0.1:
+            return -1
+        elif -0.1 <= dp < 0.1:
+            return 0
+        else:
+            return 1
+
+    def reward_fn2(history: History) -> float:
+        dp = history.dp[-1]
+
+        if dp < 0:
+            return 1 * dp
+        else:
+            return 2 * dp
+
+    env = PVEnvDiscrete.from_file(
         PV_PARAMS_PATH,
         WEATHER_PATH,
-        normalize=False,
+        states=["dv", "dp"],
+        reward_fn=reward_fn2,
         actions=[-1.0, -0.1, 0, 0.1, 1.0],
     )
     device = torch.device("cpu")
