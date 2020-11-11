@@ -3,7 +3,7 @@ from src.utils import read_weather_csv, clip_num, load_dict, save_dict
 
 
 def test_read_weather():
-    df = read_weather_csv(os.path.join(".", "data", "toy_weather.csv"))[79:]
+    df = read_weather_csv(os.path.join(".", "data", "weather_sim_01.csv"))[79:]
     ir = df.loc["2019-06-29 07:20:00"]["Irradiance"]
     temp = df.iloc[0]["Temperature"]
 

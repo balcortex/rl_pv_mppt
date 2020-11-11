@@ -2,38 +2,17 @@ import gym
 import pandas as pd
 from typing import Optional, List
 import numpy as np
-import collections
-from dataclasses import dataclass, field
 import os
 import matplotlib.pyplot as plt
+from math import atan2
 
 from src.pv_array import PVArray
 from src.utils import read_weather_csv
+from src.common import StepResult, History
+from src.logger import logger
 
 G_MAX = 1200
 T_MAX = 60
-NEG_REWARD = -100
-
-StepResult = collections.namedtuple(
-    "StepResult", field_names=["obs", "reward", "done", "info"]
-)
-
-
-@dataclass
-class History:
-    g: list = field(default_factory=list)
-    t: list = field(default_factory=list)
-    p: list = field(default_factory=list)
-    v: list = field(default_factory=list)
-    i: list = field(default_factory=list)
-    dp: list = field(default_factory=list)
-    dv: list = field(default_factory=list)
-    di: list = field(default_factory=list)
-    g_norm: list = field(default_factory=list)
-    t_norm: list = field(default_factory=list)
-    p_norm: list = field(default_factory=list)
-    v_norm: list = field(default_factory=list)
-    i_norm: list = field(default_factory=list)
 
 
 class PVEnvBase(gym.Env):
@@ -47,6 +26,9 @@ class PVEnvBase(gym.Env):
     def step(self, action) -> np.ndarray:
         raise NotImplementedError
 
+    def render(self, vars: List) -> None:
+        raise NotImplementedError
+
     def _get_observation_space(self) -> gym.Space:
         raise NotImplementedError
 
@@ -57,8 +39,10 @@ class PVEnvBase(gym.Env):
         raise NotImplementedError
 
     @classmethod
-    def from_file(cls, pv_params_path: str, weather_path: str, **kwargs):
-        pvarray = PVArray.from_json(pv_params_path)
+    def from_file(
+        cls, pv_params_path: str, weather_path: str, pvarray_ckp_path: str, **kwargs
+    ):
+        pvarray = PVArray.from_json(pv_params_path, ckp_path=pvarray_ckp_path)
         weather = read_weather_csv(weather_path)
         return cls(pvarray, weather, **kwargs)
 
@@ -100,7 +84,8 @@ class PVEnv(PVEnvBase):
         self.step_idx = 0
         self.done = False
 
-        v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
+        # v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
+        v = np.random.randint(2, self.pvarray.voc)
 
         return self._store_step(v)
 
@@ -116,8 +101,8 @@ class PVEnv(PVEnvBase):
         obs = self._store_step(v)
         reward = self.reward_fn(self.history)
 
-        if self.history.p[-1] < 0 or self.history.v[-1] < 1:
-            self.done = True
+        # if self.history.p[-1] < 0 or self.history.v[-1] < 1:
+        #     self.done = True
         if self.step_counter >= len(self.weather) - 1:
             self.done = True
 
@@ -128,29 +113,37 @@ class PVEnv(PVEnvBase):
             {"step_idx": self.step_idx, "steps": self.step_counter},
         )
 
-    def render(self) -> None:
+    def render(self, vars: List[str]) -> None:
+        for var in vars:
+            if var in ["dp", "dv"]:
+                plt.hist(getattr(self.history, var), label=var)
+            else:
+                plt.plot(getattr(self.history, var), label=var)
+            plt.legend()
+            plt.show()
+
+    def render_vs_true(self, po: bool = False) -> None:
         p_real, v_real, _ = self.pvarray.get_true_mpp(self.history.g, self.history.t)
-        plt.subplot(2, 3, 1)
-        plt.plot(self.history.g, label="Irradiance")
-        plt.legend()
-        plt.subplot(2, 3, 2)
-        plt.plot(self.history.t, label="Cell temperature")
-        plt.legend()
-        plt.subplot(2, 3, 3)
-        plt.plot(self.history.p, label="Power")
-        plt.plot(p_real, label="Max")
-        plt.legend()
-        plt.subplot(2, 3, 4)
-        plt.plot(self.history.v, label="Voltage")
-        plt.plot(v_real, label="Vmpp")
-        plt.legend()
-        plt.subplot(2, 3, 5)
-        plt.plot(self.history.dv, "o", label="Delta V")
-        plt.legend()
-        plt.subplot(2, 3, 6)
-        plt.plot(self.history.dp, "o", label="Delta P")
+        if po:
+            p_po, v_po, _ = self.pvarray.get_po_mpp(
+                self.history.g, self.history.t, v0=self.history.v[0], v_step=0.2
+            )
+        plt.plot(p_real, label="P Max")
+        plt.plot(self.history.p, label="P RL")
+        if po:
+            plt.plot(p_po, label="P P&O")
         plt.legend()
         plt.show()
+        plt.plot(v_real, label="Vmpp")
+        plt.plot(self.history.v, label="V RL")
+        if po:
+            plt.plot(v_po, label="V P&O")
+        plt.legend()
+        plt.show()
+
+        if po:
+            logger.info(f"PO Efficiency={PVArray.mppt_eff(p_real, p_po)}")
+        logger.info(f"RL Efficiency={PVArray.mppt_eff(p_real, self.history.p)}")
 
     def _add_history(self, p, v, i, g, t) -> None:
         self.history.p.append(p)
@@ -168,10 +161,15 @@ class PVEnv(PVEnvBase):
             self.history.dp.append(0.0)
             self.history.dv.append(0.0)
             self.history.di.append(0.0)
+            self.history.deg.append(0.0)
         else:
             self.history.dp.append(self.history.p[-1] - self.history.p[-2])
             self.history.dv.append(self.history.v[-1] - self.history.v[-2])
             self.history.di.append(self.history.i[-1] - self.history.i[-2])
+            self.history.deg.append(
+                atan2(self.history.di[-1], self.history.dv[-1])
+                + atan2(self.history.i[-1], self.history.v[-1])
+            )
 
     def _get_delta_v(self, action: float) -> float:
         if isinstance(action, list):

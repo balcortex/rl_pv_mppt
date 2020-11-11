@@ -21,9 +21,9 @@ class PVArray:
     def __init__(
         self,
         params: Dict,
+        ckp_path: str,
         f_precision: int = 3,
-        new_engine=True,
-        path: Optional[str] = None,
+        new_engine=False,
     ):
         """PV Array Model, interface between MATLAB and Python
 
@@ -35,7 +35,7 @@ class PVArray:
         self._params = params
         self.float_precision = f_precision
         self._model_path = os.path.join("src", "matlab_model")
-        self.params_path = path
+        self.ckp_path = ckp_path
 
         if new_engine:
             self._eng = matlab.engine.start_matlab()
@@ -45,10 +45,6 @@ class PVArray:
 
         self._init()
         self._init_history()
-
-    def __del__(self):
-        self._save_history()
-        self._eng.quit()
 
     def __repr__(self) -> str:
         return (
@@ -62,7 +58,7 @@ class PVArray:
         Simulate the simulink model
 
         Params:
-            votlage: load voltage [V]
+            voltage: load voltage [V]
             irradiance: solar irradiance [W/m^2]
             temperature: cell temperature [celsius]
         """
@@ -189,18 +185,14 @@ class PVArray:
         logger.info("Model loaded succesfully.")
 
     def _init_history(self) -> None:
-        filename = os.path.basename(self.params_path)
-        self.hist_path = os.path.join("data", filename)
-
-        if os.path.exists(self.hist_path):
-            self.hist = defaultdict(lambda: None, utils.load_dict(self.hist_path))
+        if os.path.exists(self.ckp_path):
+            self.hist = defaultdict(lambda: None, utils.load_dict(self.ckp_path))
         else:
             self.hist = defaultdict(lambda: None)
 
     def _save_history(self, verbose: bool = True) -> None:
-        utils.save_dict(self.hist, self.hist_path, verbose=verbose)
+        utils.save_dict(self.hist, self.ckp_path, verbose=verbose)
 
-    # @lru_cache(maxsize=None)
     def _get_true_mpp(
         self,
         irradiance: float,
@@ -239,7 +231,6 @@ class PVArray:
             {"Value": str(voltage)},
         )
 
-    # @lru_cache(maxsize=None)
     def _simulate(
         self, voltage: float, irradiance: float, cell_temp: float
     ) -> PVSimResult:
@@ -262,6 +253,10 @@ class PVArray:
     def _start_simulation(self) -> None:
         "Start the simulation command"
         set_parameters(self._eng, self.model_name, {"SimulationCommand": "start"})
+
+    @staticmethod
+    def mppt_eff(p_real: List[float], p: List[float]) -> float:
+        return sum([p1 / p2 for p1, p2 in zip(p, p_real)]) * 100 / len(p_real)
 
     @property
     def voc(self) -> float:
@@ -291,7 +286,7 @@ class PVArray:
     @classmethod
     def from_json(cls, path: str, **kwargs):
         "Create a PV Array from a json file containing a string with the parameters"
-        return cls(params=utils.load_dict(path), path=path, **kwargs)
+        return cls(params=utils.load_dict(path), **kwargs)
 
 
 if __name__ == "__main__":

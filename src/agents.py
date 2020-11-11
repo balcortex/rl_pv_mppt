@@ -7,38 +7,33 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import os
 
 from src.experience import ExperienceSorceDiscountedSteps
 from src.policies import BasePolicy, DiscreteCategoricalDistributionPolicy
+from src.logger import logger
 
 
 class BasePolicy:
     "Abstract class of Agent"
 
-    def __call__(self):
+    def __call__(self, obs: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
-    def train(self):
+    def train(self) -> None:
         raise NotImplementedError
 
-    def _reset(self):
-        self.hist_total_rew = []
-        self.hist_mean_rew = []
-        self.hist_steps = []
-        self.hist_total_loss = []
-        self.hist_entropy_loss = []
-        self.hist_value_loss = []
-        self.hist_policy_loss = []
-        self.counter_ep = 0
-        self.counter_steps_per_ep = 0
-        self.counter_step = 0
-        self.ep_reward = 0
-        self.total_loss = np.NaN
-        self.policy_loss = np.NaN
-        self.entropy_loss = np.NaN
-        self.value_loss = np.NaN
-        self.mean_reward = np.NaN
-        self.steps_per_ep = np.NaN
+    def reset(self) -> None:
+        raise NotImplementedError
+
+    def plot_performance(self, metrics: List[str]) -> None:
+        raise NotImplementedError
+
+    def save(self, path: str) -> None:
+        raise NotImplementedError
+
+    def load(self, path: str) -> None:
+        raise NotImplementedError
 
 
 class DiscreteActorCritic(BasePolicy):
@@ -62,6 +57,7 @@ class DiscreteActorCritic(BasePolicy):
         lr: float,
         n_steps: int,
         batch_size: int,
+        chk_path: str,
         optimizer: str = "adam",
         apply_softmax: bool = True,
     ):
@@ -71,6 +67,7 @@ class DiscreteActorCritic(BasePolicy):
         self.gamma = gamma
         self.beta_entropy = beta_entropy
         self.n_steps = n_steps
+        self.chk_path = chk_path
         if optimizer == "adam":
             self.optimizer = torch.optim.Adam(net.parameters(), lr=lr)
         else:
@@ -82,9 +79,21 @@ class DiscreteActorCritic(BasePolicy):
             env=env, policy=self.policy, gamma=gamma, n_steps=n_steps, steps=batch_size
         )
 
-        self._reset()
+        self.reset()
 
-    def train(self, steps: int, verbose_every: Optional[int] = 0):
+        if chk_path:
+            if os.path.exists(chk_path):
+                self.load()
+
+    def __call__(self, obs: np.ndarray, add_batch_dim: bool = False) -> np.ndarray:
+        return self.policy(obs, add_batch_dim=add_batch_dim)
+
+    def train(
+        self,
+        steps: int,
+        verbose_every: Optional[int] = 0,
+        save_every: Optional[int] = 0,
+    ):
 
         for _ in tqdm(range(steps)):
             self.counter_step += 1
@@ -179,6 +188,32 @@ class DiscreteActorCritic(BasePolicy):
                         f"episodes={self.counter_ep}",
                     )
 
+            if save_every and self.chk_path:
+                if self.counter_step % save_every == 0:
+                    self.save()
+
+        if self.chk_path:
+            self.save()
+
+    def reset(self) -> None:
+        self.hist_total_rew = []
+        self.hist_mean_rew = []
+        self.hist_steps = []
+        self.hist_total_loss = []
+        self.hist_entropy_loss = []
+        self.hist_value_loss = []
+        self.hist_policy_loss = []
+        self.counter_ep = 0
+        self.counter_steps_per_ep = 0
+        self.counter_step = 0
+        self.ep_reward = 0
+        self.total_loss = np.NaN
+        self.policy_loss = np.NaN
+        self.entropy_loss = np.NaN
+        self.value_loss = np.NaN
+        self.mean_reward = np.NaN
+        self.steps_per_ep = np.NaN
+
     def plot_performance(
         self,
         metrics: List[str] = [
@@ -203,3 +238,54 @@ class DiscreteActorCritic(BasePolicy):
             plt.plot(self.hist_steps, dic[metric], label=metric)
             plt.legend()
             plt.show()
+
+    def save(self, path: Optional[str] = None) -> None:
+        path = path or self.chk_path
+        torch.save(
+            {
+                "model_state_dict": self.net.state_dict(),
+                "optimizer_state_dict": self.optimizer.state_dict(),
+                "hist_total_rew": self.hist_total_rew,
+                "hist_mean_rew": self.hist_mean_rew,
+                "hist_steps": self.hist_steps,
+                "hist_total_loss": self.hist_total_loss,
+                "hist_entropy_loss": self.hist_entropy_loss,
+                "hist_value_loss": self.hist_value_loss,
+                "hist_policy_loss": self.hist_policy_loss,
+                "counter_ep": self.counter_ep,
+                "counter_steps_per_ep": self.counter_steps_per_ep,
+                "counter_step": self.counter_step,
+                "total_loss": self.total_loss,
+                "policy_loss": self.policy_loss,
+                "entropy_loss": self.entropy_loss,
+                "value_loss": self.value_loss,
+                "mean_reward": self.mean_reward,
+                "steps_per_ep": self.steps_per_ep,
+            },
+            path,
+        )
+        logger.info(f"Checkpoint saved to {path}")
+
+    def load(self, path: Optional[str] = None) -> None:
+        path = path or self.chk_path
+        checkpoint = torch.load(path)
+        self.net.load_state_dict(checkpoint["model_state_dict"])
+        self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        self.hist_total_rew = checkpoint["hist_total_rew"]
+        self.hist_mean_rew = checkpoint["hist_mean_rew"]
+        self.hist_steps = checkpoint["hist_steps"]
+        self.hist_total_loss = checkpoint["hist_total_loss"]
+        self.hist_entropy_loss = checkpoint["hist_entropy_loss"]
+        self.hist_value_loss = checkpoint["hist_value_loss"]
+        self.hist_policy_loss = checkpoint["hist_policy_loss"]
+        self.counter_ep = checkpoint["counter_ep"]
+        self.counter_steps_per_ep = checkpoint["counter_steps_per_ep"]
+        self.counter_step = checkpoint["counter_step"]
+        self.ep_reward = 0
+        self.total_loss = checkpoint["total_loss"]
+        self.policy_loss = checkpoint["policy_loss"]
+        self.entropy_loss = checkpoint["entropy_loss"]
+        self.value_loss = checkpoint["value_loss"]
+        self.mean_reward = checkpoint["mean_reward"]
+        self.steps_per_ep = checkpoint["steps_per_ep"]
+        logger.info(f"Checkpoint loaded from {path}")
