@@ -12,9 +12,6 @@ class BasePolicy:
     def __call__(self):
         raise NotImplementedError
 
-    def _get_probs(self):
-        raise NotImplementedError
-
 
 class DiscreteCategoricalDistributionPolicy(BasePolicy):
     """
@@ -36,15 +33,17 @@ class DiscreteCategoricalDistributionPolicy(BasePolicy):
         device: Union[str, torch.device],
         apply_softmax: bool = False,
         net_index: Optional[int] = None,
+        add_batch_dim: bool = False,
     ):
         self.net = net
         self.device = device
         self.apply_softmax = apply_softmax
         self.net_index = net_index
+        self.add_batch_dim = add_batch_dim
 
     @torch.no_grad()
-    def __call__(self, states: np.ndarray, add_batch_dim: bool = False):
-        if add_batch_dim:
+    def __call__(self, states: np.ndarray):
+        if self.add_batch_dim:
             states = states[np.newaxis, :]
         states_v = torch.tensor(states, dtype=torch.float32).to(self.device)
         probs_t = self._get_probs(states_v)
@@ -52,7 +51,7 @@ class DiscreteCategoricalDistributionPolicy(BasePolicy):
             probs_t = F.softmax(probs_t, dim=1)
         probs_dist = torch.distributions.Categorical(probs_t)
 
-        if add_batch_dim:
+        if self.add_batch_dim:
             return probs_dist.sample().cpu().numpy()[0]
         return probs_dist.sample().cpu().numpy()
 
@@ -79,9 +78,14 @@ class DiscreteRandomPolicy(DiscreteCategoricalDistributionPolicy):
         net: torch.nn.Module,
         device: Union[str, torch.device],
         net_index: Optional[int] = None,
+        add_batch_dim: bool = False,
     ):
         super().__init__(
-            net=net, device=device, apply_softmax=True, net_index=net_index
+            net=net,
+            device=device,
+            apply_softmax=True,
+            net_index=net_index,
+            add_batch_dim=add_batch_dim,
         )
 
     def _get_probs(self, states_v: torch.Tensor):
@@ -109,22 +113,42 @@ class DiscreteGreedyPolicy(DiscreteCategoricalDistributionPolicy):
         net: torch.nn.Module,
         device: Union[str, torch.device],
         net_index: Optional[int] = None,
+        add_batch_dim: bool = False,
     ):
         super().__init__(
-            net=net, device=device, apply_softmax=False, net_index=net_index
+            net=net,
+            device=device,
+            apply_softmax=False,
+            net_index=net_index,
+            add_batch_dim=add_batch_dim,
         )
 
     @torch.no_grad()
-    def __call__(self, states: np.ndarray, add_batch_dim: bool = False):
-        if add_batch_dim:
+    def __call__(self, states: np.ndarray):
+        if self.add_batch_dim:
             states = states[np.newaxis, :]
         states_v = torch.tensor(states, dtype=torch.float32).to(self.device)
         probs_t = self._get_probs(states_v)
         argmax = torch.argmax(probs_t, dim=1)
 
-        if add_batch_dim:
+        if self.add_batch_dim:
             return argmax.cpu().numpy()[0]
         return argmax.cpu().numpy()
+
+
+class GaussianPolicy(BasePolicy):
+    def __init__(self, net: torch.nn.Module, device: Union[str, torch.device]):
+        self.net = net
+        self.device = device
+
+    @torch.no_grad()
+    def __call__(self, states: np.ndarray):
+        states_v = torch.tensor(states, dtype=torch.float32).to(self.device)
+
+        mean_t, std_t, _ = self.net(states_v)
+        actions = torch.normal(mean_t, std_t).squeeze()
+
+        return actions.cpu().numpy()
 
 
 if __name__ == "__main__":

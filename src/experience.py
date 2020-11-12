@@ -29,7 +29,7 @@ class ExperienceSorce:
             self.obs = self.env.reset()
             self.done = False
         obs = self.obs
-        action = int(self.policy(obs, add_batch_dim=True))
+        action = int(self.policy(obs))
         new_obs, reward, done, _ = self.env.step(action)
         if done:
             self.done = True

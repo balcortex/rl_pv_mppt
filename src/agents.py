@@ -10,7 +10,11 @@ import matplotlib.pyplot as plt
 import os
 
 from src.experience import ExperienceSorceDiscountedSteps
-from src.policies import BasePolicy, DiscreteCategoricalDistributionPolicy
+from src.policies import (
+    BasePolicy,
+    DiscreteCategoricalDistributionPolicy,
+    DiscreteGreedyPolicy,
+)
 from src.logger import logger
 
 
@@ -50,6 +54,7 @@ class DiscreteActorCritic(BasePolicy):
     def __init__(
         self,
         env: gym.Env,
+        test_env: gym.Env,
         net: nn.Module,
         device: torch.device,
         gamma: float,
@@ -62,6 +67,7 @@ class DiscreteActorCritic(BasePolicy):
         apply_softmax: bool = True,
     ):
         self.env = env
+        self.test_env = test_env
         self.net = net
         self.device = device
         self.gamma = gamma
@@ -73,10 +79,27 @@ class DiscreteActorCritic(BasePolicy):
         else:
             raise ValueError("Only `adam` is supported")
         self.policy = DiscreteCategoricalDistributionPolicy(
-            net=net, device=device, apply_softmax=apply_softmax, net_index=0
+            net=net,
+            device=device,
+            apply_softmax=apply_softmax,
+            net_index=0,
+            add_batch_dim=True,
+        )
+        self.test_policy = DiscreteGreedyPolicy(
+            net=net,
+            device=device,
+            net_index=0,
+            add_batch_dim=True,
         )
         self.exp_train_source = ExperienceSorceDiscountedSteps(
             env=env, policy=self.policy, gamma=gamma, n_steps=n_steps, steps=batch_size
+        )
+        self.exp_test_source = ExperienceSorceDiscountedSteps(
+            env=test_env,
+            policy=self.test_policy,
+            gamma=gamma,
+            n_steps=n_steps,
+            steps=batch_size,
         )
 
         self.reset()
@@ -85,8 +108,19 @@ class DiscreteActorCritic(BasePolicy):
             if os.path.exists(chk_path):
                 self.load()
 
-    def __call__(self, obs: np.ndarray, add_batch_dim: bool = False) -> np.ndarray:
-        return self.policy(obs, add_batch_dim=add_batch_dim)
+    def __call__(self, obs: np.ndarray) -> np.ndarray:
+        return self.policy(obs)
+
+    def test(self, num_episodes: int = 1):
+        episodes = self.exp_test_source.play_episodes(episodes=num_episodes)
+
+        reward = 0
+        for ep in episodes:
+            for step in ep:
+                reward += step.reward
+        reward /= num_episodes
+
+        return reward
 
     def train(
         self,
