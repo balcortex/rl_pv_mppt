@@ -18,7 +18,7 @@ from src.policies import (
 from src.logger import logger
 
 
-class BasePolicy:
+class AgentABC:
     "Abstract class of Agent"
 
     def __call__(self, obs: np.ndarray) -> np.ndarray:
@@ -39,8 +39,42 @@ class BasePolicy:
     def load(self, path: str) -> None:
         raise NotImplementedError
 
+    def _get_train_policy(self) -> BasePolicy:
+        raise NotImplementedError
 
-class DiscreteActorCritic(BasePolicy):
+    def _get_test_policy(self) -> BasePolicy:
+        raise NotImplementedError
+
+
+class Agent(AgentABC):
+    "Base class for an Agent"
+
+    def __call__(self, obs: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
+
+    def train(self) -> None:
+        raise NotImplementedError
+
+    def reset(self) -> None:
+        raise NotImplementedError
+
+    def plot_performance(self, metrics: List[str]) -> None:
+        raise NotImplementedError
+
+    def save(self, path: str) -> None:
+        raise NotImplementedError
+
+    def load(self, path: str) -> None:
+        raise NotImplementedError
+
+    def _get_train_policy(self) -> BasePolicy:
+        raise NotImplementedError
+
+    def _get_test_policy(self) -> BasePolicy:
+        raise NotImplementedError
+
+
+class DiscreteActorCritic(Agent):
     """
     Agent that has a network that predicts both the action probabilities and the value
     of the state. The value is used to calculate the Advantage (A) of and action given
@@ -78,19 +112,9 @@ class DiscreteActorCritic(BasePolicy):
             self.optimizer = torch.optim.Adam(net.parameters(), lr=lr)
         else:
             raise ValueError("Only `adam` is supported")
-        self.policy = DiscreteCategoricalDistributionPolicy(
-            net=net,
-            device=device,
-            apply_softmax=apply_softmax,
-            net_index=0,
-            add_batch_dim=True,
-        )
-        self.test_policy = DiscreteGreedyPolicy(
-            net=net,
-            device=device,
-            net_index=0,
-            add_batch_dim=True,
-        )
+        self.apply_softmax = apply_softmax
+        self.policy = self._get_train_policy()
+        self.test_policy = self._get_test_policy()
         self.exp_train_source = ExperienceSorceDiscountedSteps(
             env=env, policy=self.policy, gamma=gamma, n_steps=n_steps, steps=batch_size
         )
@@ -184,9 +208,9 @@ class DiscreteActorCritic(BasePolicy):
 
             # Normalize the rewards
             values_target_t = torch.tensor(values, dtype=torch.float32).to(self.device)
-            std, mean = torch.std_mean(values_target_t)
-            values_target_t -= mean
-            values_target_t /= std + 1e-6
+            # std, mean = torch.std_mean(values_target_t)
+            # values_target_t -= mean
+            # values_target_t /= std + 1e-6
 
             self.optimizer.zero_grad()
             logits_t, values_t = self.net(states_t)
@@ -323,3 +347,75 @@ class DiscreteActorCritic(BasePolicy):
         self.mean_reward = checkpoint["mean_reward"]
         self.steps_per_ep = checkpoint["steps_per_ep"]
         logger.info(f"Checkpoint loaded from {path}")
+
+    def _get_train_policy(self) -> BasePolicy:
+        return DiscreteCategoricalDistributionPolicy(
+            net=self.net,
+            device=self.device,
+            apply_softmax=self.apply_softmax,
+            net_index=0,
+            add_batch_dim=True,
+        )
+
+    def _get_test_policy(self) -> BasePolicy:
+        return DiscreteGreedyPolicy(
+            net=self.net,
+            device=self.device,
+            net_index=0,
+            add_batch_dim=True,
+        )
+
+
+class ContinuosActorCritic(DiscreteActorCritic):
+    """
+    Agent that has a network that predicts both the action probabilities and the value
+    of the state. The value is used to calculate the Advantage (A) of and action given
+    the state -> A(s,a) = Q(s,a) - V(s).
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        test_env: gym.Env,
+        net: nn.Module,
+        device: torch.device,
+        gamma: float,
+        beta_entropy: float,
+        lr: float,
+        n_steps: int,
+        batch_size: int,
+        chk_path: str,
+        optimizer: str = "adam",
+    ):
+        super().__init__(
+            env=env,
+            test_env=test_env,
+            net=net,
+            device=device,
+            gamma=gamma,
+            beta_entropy=beta_entropy,
+            lr=lr,
+            n_steps=n_steps,
+            batch_size=batch_size,
+            chk_path=chk_path,
+            optimizer=optimizer,
+        )
+
+    # def train
+
+    def _get_train_policy(self, apply_softmax: bool) -> BasePolicy:
+        return DiscreteCategoricalDistributionPolicy(
+            net=self.net,
+            device=self.device,
+            apply_softmax=apply_softmax,
+            net_index=0,
+            add_batch_dim=True,
+        )
+
+    def _get_test_policy(self) -> BasePolicy:
+        return DiscreteGreedyPolicy(
+            net=self.net,
+            device=self.device,
+            net_index=0,
+            add_batch_dim=True,
+        )

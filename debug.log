@@ -4516,3 +4516,362 @@ INFO 2020-11-12 12:19:42,839 [agents.py:save:301] Checkpoint saved to models\01_
 INFO 2020-11-12 12:19:48,918 [agents.py:save:301] Checkpoint saved to models\01_cartpole_ac.tar
 INFO 2020-11-12 12:24:37,301 [agents.py:save:301] Checkpoint saved to models\01_cartpole_ac.tar
 INFO 2020-11-12 12:24:42,957 [agents.py:save:301] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 17:54:57,257 [agents.py:save:301] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 18:42:21,182 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:42:21,183 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:42:21,341 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:42:22,608 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:42:22,638 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:42:22,640 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:42:22,666 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:42:22,667 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:42:48,537 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:42:48,539 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:42:48,575 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:42:49,727 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:42:49,751 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:42:49,753 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:42:49,764 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:42:49,765 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:43:15,513 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:43:15,515 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:43:15,548 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:43:16,576 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:43:16,602 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:43:16,604 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:43:16,615 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:43:16,616 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:44:01,182 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:44:01,183 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:44:32,923 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:45:11,382 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:45:11,416 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:45:11,418 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:45:11,429 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:45:11,431 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:45:16,707 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:45:37,160 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:45:37,183 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:45:37,185 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:45:37,208 [agents.py:load:325] Checkpoint loaded from models\02_mppt_ac.tar
+INFO 2020-11-12 18:46:13,262 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:46:32,514 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:46:33,152 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:46:33,819 [pv_env.py:render_vs_true:145] PO Efficiency=97.80918294002149
+INFO 2020-11-12 18:46:33,820 [pv_env.py:render_vs_true:146] RL Efficiency=98.14023974709939
+INFO 2020-11-12 18:47:09,679 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:47:09,685 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:49:57,939 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:49:57,941 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:50:02,948 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:50:22,106 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:50:22,127 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:50:22,128 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:50:22,142 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 18:50:22,144 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 18:50:27,086 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 18:50:46,288 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 18:50:46,314 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 18:50:46,316 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 18:50:46,334 [agents.py:load:325] Checkpoint loaded from models\02_mppt_ac.tar
+INFO 2020-11-12 18:51:10,873 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:51:14,903 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:51:15,891 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:51:16,536 [pv_env.py:render_vs_true:145] PO Efficiency=98.37564292092543
+INFO 2020-11-12 18:51:16,537 [pv_env.py:render_vs_true:146] RL Efficiency=98.5356611020595
+INFO 2020-11-12 18:51:57,056 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:51:57,723 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:51:58,332 [pv_env.py:render_vs_true:145] PO Efficiency=97.4786539723702
+INFO 2020-11-12 18:51:58,333 [pv_env.py:render_vs_true:146] RL Efficiency=97.87386783329646
+INFO 2020-11-12 18:52:05,295 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:52:06,024 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:52:06,637 [pv_env.py:render_vs_true:145] PO Efficiency=99.76011729307052
+INFO 2020-11-12 18:52:06,638 [pv_env.py:render_vs_true:146] RL Efficiency=89.5225991993583
+INFO 2020-11-12 18:52:22,158 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:52:22,792 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:52:23,404 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 18:52:23,405 [pv_env.py:render_vs_true:146] RL Efficiency=98.0874967941085
+INFO 2020-11-12 18:52:33,231 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:52:33,861 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:52:34,461 [pv_env.py:render_vs_true:145] PO Efficiency=94.17581414169271
+INFO 2020-11-12 18:52:34,462 [pv_env.py:render_vs_true:146] RL Efficiency=97.23060204677925
+INFO 2020-11-12 18:52:43,309 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:52:43,957 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:52:44,582 [pv_env.py:render_vs_true:145] PO Efficiency=99.65062043789747
+INFO 2020-11-12 18:52:44,583 [pv_env.py:render_vs_true:146] RL Efficiency=97.47083516343349
+INFO 2020-11-12 18:52:54,715 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:52:55,353 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:52:55,997 [pv_env.py:render_vs_true:145] PO Efficiency=99.76011729307052
+INFO 2020-11-12 18:52:55,998 [pv_env.py:render_vs_true:146] RL Efficiency=89.5225991993583
+INFO 2020-11-12 18:53:42,456 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:54:03,696 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:54:24,828 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:54:45,888 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:55:06,959 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:55:28,075 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:55:48,751 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:55:49,394 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:55:50,006 [pv_env.py:render_vs_true:145] PO Efficiency=99.82041790556364
+INFO 2020-11-12 18:55:50,007 [pv_env.py:render_vs_true:146] RL Efficiency=96.57798646606106
+INFO 2020-11-12 18:55:57,381 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:55:58,026 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:55:58,646 [pv_env.py:render_vs_true:145] PO Efficiency=97.80918294002149
+INFO 2020-11-12 18:55:58,647 [pv_env.py:render_vs_true:146] RL Efficiency=95.31447293165074
+INFO 2020-11-12 18:56:12,167 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 18:56:12,801 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 18:56:13,391 [pv_env.py:render_vs_true:145] PO Efficiency=99.24187613214734
+INFO 2020-11-12 18:56:13,392 [pv_env.py:render_vs_true:146] RL Efficiency=95.61165035352273
+INFO 2020-11-12 18:56:46,257 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:57:07,195 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:57:28,169 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:57:49,164 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:58:12,647 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:58:38,164 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:59:01,513 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:59:22,887 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 18:59:46,431 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:00:17,558 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:00:59,546 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:01:23,244 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:01:45,931 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:02:08,254 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:02:31,281 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:02:57,332 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:03:20,952 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:03:43,219 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:04:05,137 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:04:28,505 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:04:51,828 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:05:14,259 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:05:37,300 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:06:00,432 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:06:23,813 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:06:51,431 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:07:17,829 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:07:43,355 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:08:05,475 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:08:27,931 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:08:49,772 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:09:13,922 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:09:36,445 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:09:58,546 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:10:22,391 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:10:44,822 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:11:07,785 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:11:30,608 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:11:53,048 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:12:15,185 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:12:40,285 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:13:03,667 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:13:26,200 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:13:50,528 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:14:13,141 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:14:35,896 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:14:58,125 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:15:21,079 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:15:44,663 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:16:09,043 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:16:34,321 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:16:58,308 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:17:22,380 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:17:44,275 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:18:05,786 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:18:29,025 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:18:53,570 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:19:18,082 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:19:42,557 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:20:04,321 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:20:25,617 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:20:50,244 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:21:15,087 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:21:39,470 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:22:01,213 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:22:01,850 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:22:02,578 [pv_env.py:render_vs_true:145] PO Efficiency=99.92069089132565
+INFO 2020-11-12 19:22:02,579 [pv_env.py:render_vs_true:146] RL Efficiency=98.87937311058478
+INFO 2020-11-12 19:22:10,735 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:22:11,390 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:22:12,013 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 19:22:12,014 [pv_env.py:render_vs_true:146] RL Efficiency=98.57932930626345
+INFO 2020-11-12 19:25:02,628 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:25:02,630 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:25:07,105 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:25:26,595 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:25:26,617 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:25:26,619 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 19:25:26,631 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:25:26,632 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:25:31,572 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:25:51,189 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:25:51,210 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:25:51,212 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 19:26:32,675 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:26:33,308 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:26:33,952 [pv_env.py:render_vs_true:145] PO Efficiency=93.65936081969112
+INFO 2020-11-12 19:26:33,954 [pv_env.py:render_vs_true:146] RL Efficiency=22.29549129624085
+INFO 2020-11-12 19:27:06,391 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:27:08,818 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:27:09,506 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:27:10,084 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 19:27:10,085 [pv_env.py:render_vs_true:146] RL Efficiency=55.18120254928919
+INFO 2020-11-12 19:27:18,525 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:27:20,866 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:27:21,492 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:27:22,315 [pv_env.py:render_vs_true:145] PO Efficiency=93.65936081969112
+INFO 2020-11-12 19:27:22,316 [pv_env.py:render_vs_true:146] RL Efficiency=49.93393022224228
+INFO 2020-11-12 19:27:35,115 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:27:37,047 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:27:37,685 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:27:38,333 [pv_env.py:render_vs_true:145] PO Efficiency=93.12622239736858
+INFO 2020-11-12 19:27:38,334 [pv_env.py:render_vs_true:146] RL Efficiency=39.63008419954153
+INFO 2020-11-12 19:27:44,430 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:27:46,639 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:27:47,276 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:27:48,095 [pv_env.py:render_vs_true:145] PO Efficiency=95.12257513495668
+INFO 2020-11-12 19:27:48,096 [pv_env.py:render_vs_true:146] RL Efficiency=75.3889399977842
+INFO 2020-11-12 19:27:53,373 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:27:55,446 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:27:56,072 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:27:56,636 [pv_env.py:render_vs_true:145] PO Efficiency=99.79184856104395
+INFO 2020-11-12 19:27:56,637 [pv_env.py:render_vs_true:146] RL Efficiency=81.95046288118068
+INFO 2020-11-12 19:28:06,654 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:28:07,285 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:28:07,917 [pv_env.py:render_vs_true:145] PO Efficiency=99.76011729307052
+INFO 2020-11-12 19:28:07,917 [pv_env.py:render_vs_true:146] RL Efficiency=89.5225991993583
+INFO 2020-11-12 19:30:00,492 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:30:00,493 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:30:05,195 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:30:25,302 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:30:25,326 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:30:25,328 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 19:30:25,340 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:30:25,341 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:30:30,412 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:30:53,008 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:30:53,046 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:30:53,049 [utils.py:read_weather_csv:12] Reading data\weather_real.csv . . .
+INFO 2020-11-12 19:31:44,831 [utils.py:read_weather_csv:12] Reading .\data\weather_sim_01.csv . . .
+INFO 2020-11-12 19:31:45,156 [utils.py:save_dict:28] Dictionary saved to temp.txt
+INFO 2020-11-12 19:31:45,163 [utils.py:load_dict:34] Dictionary readed from temp.txt
+INFO 2020-11-12 19:32:30,107 [utils.py:read_weather_csv:12] Reading .\data\weather_sim_01.csv . . .
+INFO 2020-11-12 19:33:00,521 [utils.py:read_weather_csv:12] Reading .\data\weather_sim_01.csv . . .
+INFO 2020-11-12 19:33:26,448 [utils.py:read_weather_csv:12] Reading .\data\weather_sim.csv . . .
+INFO 2020-11-12 19:33:33,854 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:33:33,855 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:33:39,274 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:34:03,921 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:34:03,948 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:34:03,966 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 19:34:03,966 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 19:34:09,128 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 19:34:31,756 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 19:34:31,773 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 19:34:31,774 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:34:45,682 [agents.py:save:301] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 19:34:55,277 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:34:55,892 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:34:56,574 [pv_env.py:render_vs_true:145] PO Efficiency=99.79184856104395
+INFO 2020-11-12 19:34:56,575 [pv_env.py:render_vs_true:146] RL Efficiency=64.72155667493259
+INFO 2020-11-12 19:42:12,922 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 19:42:13,544 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 19:47:44,142 [pv_env.py:render_vs_true:145] PO Efficiency=97.71717909122738
+INFO 2020-11-12 19:47:44,143 [pv_env.py:render_vs_true:146] RL Efficiency=7.998109195743551
+INFO 2020-11-12 20:02:30,691 [agents.py:load:320] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:02:33,559 [agents.py:save:296] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:04:53,523 [agents.py:load:321] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:04:55,247 [agents.py:save:297] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:10:57,690 [agents.py:save:297] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:11:47,369 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 20:11:47,371 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 20:11:52,017 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 20:12:12,929 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 20:12:12,967 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 20:12:12,969 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 20:12:12,980 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-12 20:12:12,982 [pv_array.py:__init__:34] Starting MATLAB engine . . .
+INFO 2020-11-12 20:12:18,008 [pv_array.py:__init__:44] MATLAB engine initializated.
+INFO 2020-11-12 20:12:40,603 [pv_array.py:_init:185] Model loaded succesfully.
+INFO 2020-11-12 20:12:40,633 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-12 20:12:40,636 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-12 20:13:02,666 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:13:11,429 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:13:12,072 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:13:12,701 [pv_env.py:render_vs_true:145] PO Efficiency=99.65062043789747
+INFO 2020-11-12 20:13:12,703 [pv_env.py:render_vs_true:146] RL Efficiency=90.87763958170973
+INFO 2020-11-12 20:13:18,356 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:13:18,999 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:13:19,610 [pv_env.py:render_vs_true:145] PO Efficiency=99.88975389049831
+INFO 2020-11-12 20:13:19,611 [pv_env.py:render_vs_true:146] RL Efficiency=96.21611504998806
+INFO 2020-11-12 20:13:52,134 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:13:53,117 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:13:54,118 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:13:54,731 [pv_env.py:render_vs_true:145] PO Efficiency=97.4786539723702
+INFO 2020-11-12 20:13:54,733 [pv_env.py:render_vs_true:146] RL Efficiency=41.02701151647362
+INFO 2020-11-12 20:14:02,608 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:14:03,235 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:14:03,828 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 20:14:03,829 [pv_env.py:render_vs_true:146] RL Efficiency=63.179117071874536
+INFO 2020-11-12 20:14:34,282 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:14:38,848 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:14:39,482 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:14:40,086 [pv_env.py:render_vs_true:145] PO Efficiency=94.6737202013439
+INFO 2020-11-12 20:14:40,088 [pv_env.py:render_vs_true:146] RL Efficiency=82.34541406451143
+INFO 2020-11-12 20:14:45,486 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:14:46,112 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:14:46,715 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 20:14:46,716 [pv_env.py:render_vs_true:146] RL Efficiency=76.45817761754131
+INFO 2020-11-12 20:15:16,988 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:15:19,825 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:15:20,698 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:15:21,304 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 20:15:21,305 [pv_env.py:render_vs_true:146] RL Efficiency=79.9858993913429
+INFO 2020-11-12 20:15:27,595 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:15:28,696 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:15:29,380 [pv_env.py:render_vs_true:145] PO Efficiency=93.65936081969112
+INFO 2020-11-12 20:15:29,381 [pv_env.py:render_vs_true:146] RL Efficiency=58.29655141665603
+INFO 2020-11-12 20:15:56,212 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:16:01,740 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:16:02,369 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:16:02,996 [pv_env.py:render_vs_true:145] PO Efficiency=93.12622239736858
+INFO 2020-11-12 20:16:02,997 [pv_env.py:render_vs_true:146] RL Efficiency=71.04918872755556
+INFO 2020-11-12 20:16:07,537 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:16:08,169 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:16:08,788 [pv_env.py:render_vs_true:145] PO Efficiency=99.54302440276746
+INFO 2020-11-12 20:16:08,790 [pv_env.py:render_vs_true:146] RL Efficiency=89.28570614694513
+INFO 2020-11-12 20:20:00,132 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:20:03,287 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:03,919 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:04,523 [pv_env.py:render_vs_true:145] PO Efficiency=98.60951636109247
+INFO 2020-11-12 20:20:04,524 [pv_env.py:render_vs_true:146] RL Efficiency=87.50689092383497
+INFO 2020-11-12 20:20:12,591 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:13,213 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:13,807 [pv_env.py:render_vs_true:145] PO Efficiency=99.94091119128841
+INFO 2020-11-12 20:20:13,808 [pv_env.py:render_vs_true:146] RL Efficiency=98.734477020044
+INFO 2020-11-12 20:20:18,129 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:18,760 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:19,361 [pv_env.py:render_vs_true:145] PO Efficiency=99.93086714880948
+INFO 2020-11-12 20:20:19,362 [pv_env.py:render_vs_true:146] RL Efficiency=95.16877362151861
+INFO 2020-11-12 20:20:22,344 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:22,972 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:23,619 [pv_env.py:render_vs_true:145] PO Efficiency=99.82041790556364
+INFO 2020-11-12 20:20:23,621 [pv_env.py:render_vs_true:146] RL Efficiency=93.05111427856109
+INFO 2020-11-12 20:20:28,130 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:28,765 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:29,358 [pv_env.py:render_vs_true:145] PO Efficiency=99.04592045453853
+INFO 2020-11-12 20:20:29,359 [pv_env.py:render_vs_true:146] RL Efficiency=84.32217072857082
+INFO 2020-11-12 20:20:33,491 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:20:34,119 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:20:34,704 [pv_env.py:render_vs_true:145] PO Efficiency=99.79184856104395
+INFO 2020-11-12 20:20:34,705 [pv_env.py:render_vs_true:146] RL Efficiency=64.72965625301106
+INFO 2020-11-12 20:21:06,774 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:21:10,731 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:21:11,357 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:21:12,173 [pv_env.py:render_vs_true:145] PO Efficiency=99.92069089132565
+INFO 2020-11-12 20:21:12,174 [pv_env.py:render_vs_true:146] RL Efficiency=83.62776524176196
+INFO 2020-11-12 20:21:37,578 [agents.py:save:297] Checkpoint saved to models\02_mppt_ac.tar
+INFO 2020-11-12 20:21:40,054 [pv_array.py:get_true_mpp:101] Calculating true MPP . . .
+INFO 2020-11-12 20:21:40,696 [pv_array.py:get_po_mpp:147] Running P&O, step=0.2 volts . . .
+INFO 2020-11-12 20:21:41,658 [pv_env.py:render_vs_true:145] PO Efficiency=93.12622239736858
+INFO 2020-11-12 20:21:41,659 [pv_env.py:render_vs_true:146] RL Efficiency=75.99254096361281
+INFO 2020-11-12 20:22:18,496 [agents.py:load:321] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:22:18,953 [agents.py:save:297] Checkpoint saved to models\01_cartpole_ac.tar
