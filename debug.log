@@ -4875,3 +4875,9 @@ INFO 2020-11-12 20:21:41,658 [pv_env.py:render_vs_true:145] PO Efficiency=93.126
 INFO 2020-11-12 20:21:41,659 [pv_env.py:render_vs_true:146] RL Efficiency=75.99254096361281
 INFO 2020-11-12 20:22:18,496 [agents.py:load:321] Checkpoint loaded from models\01_cartpole_ac.tar
 INFO 2020-11-12 20:22:18,953 [agents.py:save:297] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:22:32,272 [agents.py:load:349] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:22:32,801 [agents.py:save:325] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:35:55,518 [agents.py:load:211] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:35:57,850 [agents.py:save:187] Checkpoint saved to models\01_cartpole_ac.tar
+INFO 2020-11-12 20:36:05,747 [agents.py:load:211] Checkpoint loaded from models\01_cartpole_ac.tar
+INFO 2020-11-12 20:36:06,224 [agents.py:save:187] Checkpoint saved to models\01_cartpole_ac.tar

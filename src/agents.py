@@ -27,16 +27,19 @@ class AgentABC:
     def train(self) -> None:
         raise NotImplementedError
 
+    def test(self, num_episodes: int):
+        raise NotImplementedError
+
     def reset(self) -> None:
         raise NotImplementedError
 
     def plot_performance(self, metrics: List[str]) -> None:
         raise NotImplementedError
 
-    def save(self, path: str) -> None:
+    def save(self, path: Optional[str]) -> None:
         raise NotImplementedError
 
-    def load(self, path: str) -> None:
+    def load(self, path: Optional[str]) -> None:
         raise NotImplementedError
 
     def _get_train_policy(self) -> BasePolicy:
@@ -48,42 +51,6 @@ class AgentABC:
 
 class Agent(AgentABC):
     "Base class for an Agent"
-
-    def __call__(self, obs: np.ndarray) -> np.ndarray:
-        raise NotImplementedError
-
-    def train(self) -> None:
-        raise NotImplementedError
-
-    def reset(self) -> None:
-        raise NotImplementedError
-
-    def plot_performance(self, metrics: List[str]) -> None:
-        raise NotImplementedError
-
-    def save(self, path: str) -> None:
-        raise NotImplementedError
-
-    def load(self, path: str) -> None:
-        raise NotImplementedError
-
-    def _get_train_policy(self) -> BasePolicy:
-        raise NotImplementedError
-
-    def _get_test_policy(self) -> BasePolicy:
-        raise NotImplementedError
-
-
-class DiscreteActorCritic(Agent):
-    """
-    Agent that has a network that predicts both the action probabilities and the value
-    of the state. The value is used to calculate the Advantage (A) of and action given
-    the state -> A(s,a) = Q(s,a) - V(s).
-
-    Parameters:
-
-
-    """
 
     def __init__(
         self,
@@ -98,7 +65,6 @@ class DiscreteActorCritic(Agent):
         batch_size: int,
         chk_path: str,
         optimizer: str = "adam",
-        apply_softmax: bool = True,
     ):
         self.env = env
         self.test_env = test_env
@@ -112,11 +78,14 @@ class DiscreteActorCritic(Agent):
             self.optimizer = torch.optim.Adam(net.parameters(), lr=lr)
         else:
             raise ValueError("Only `adam` is supported")
-        self.apply_softmax = apply_softmax
         self.policy = self._get_train_policy()
         self.test_policy = self._get_test_policy()
         self.exp_train_source = ExperienceSorceDiscountedSteps(
-            env=env, policy=self.policy, gamma=gamma, n_steps=n_steps, steps=batch_size
+            env=env,
+            policy=self.policy,
+            gamma=gamma,
+            n_steps=n_steps,
+            steps=batch_size,
         )
         self.exp_test_source = ExperienceSorceDiscountedSteps(
             env=test_env,
@@ -145,6 +114,143 @@ class DiscreteActorCritic(Agent):
         reward /= num_episodes
 
         return reward
+
+    def reset(self) -> None:
+        self.hist_total_rew = []
+        self.hist_mean_rew = []
+        self.hist_steps = []
+        self.hist_total_loss = []
+        self.hist_entropy_loss = []
+        self.hist_value_loss = []
+        self.hist_policy_loss = []
+        self.counter_ep = 0
+        self.counter_steps_per_ep = 0
+        self.counter_step = 0
+        self.ep_reward = 0
+        self.total_loss = np.NaN
+        self.policy_loss = np.NaN
+        self.entropy_loss = np.NaN
+        self.value_loss = np.NaN
+        self.mean_reward = np.NaN
+        self.steps_per_ep = np.NaN
+
+    def plot_performance(
+        self,
+        metrics: List[str] = [
+            "mean_rewards",
+            "total_rewards",
+            "total_loss",
+            "policy_loss",
+            "value_loss",
+            "entropy_loss",
+        ],
+    ) -> None:
+        dic = {
+            "mean_rewards": self.hist_mean_rew,
+            "total_rewards": self.hist_total_rew,
+            "total_loss": self.hist_total_loss,
+            "policy_loss": self.hist_policy_loss,
+            "value_loss": self.hist_value_loss,
+            "entropy_loss": self.hist_entropy_loss,
+        }
+
+        for metric in metrics:
+            plt.plot(self.hist_steps, dic[metric], label=metric)
+            plt.legend()
+            plt.show()
+
+    def save(self, path: Optional[str] = None) -> None:
+        path = path or self.chk_path
+        torch.save(
+            {
+                "model_state_dict": self.net.state_dict(),
+                "optimizer_state_dict": self.optimizer.state_dict(),
+                "hist_total_rew": self.hist_total_rew,
+                "hist_mean_rew": self.hist_mean_rew,
+                "hist_steps": self.hist_steps,
+                "hist_total_loss": self.hist_total_loss,
+                "hist_entropy_loss": self.hist_entropy_loss,
+                "hist_value_loss": self.hist_value_loss,
+                "hist_policy_loss": self.hist_policy_loss,
+                "counter_ep": self.counter_ep,
+                "counter_steps_per_ep": self.counter_steps_per_ep,
+                "counter_step": self.counter_step,
+                "total_loss": self.total_loss,
+                "policy_loss": self.policy_loss,
+                "entropy_loss": self.entropy_loss,
+                "value_loss": self.value_loss,
+                "mean_reward": self.mean_reward,
+                "steps_per_ep": self.steps_per_ep,
+            },
+            path,
+        )
+        logger.info(f"Checkpoint saved to {path}")
+
+    def load(self, path: Optional[str] = None) -> None:
+        path = path or self.chk_path
+        checkpoint = torch.load(path)
+        self.net.load_state_dict(checkpoint["model_state_dict"])
+        self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        self.hist_total_rew = checkpoint["hist_total_rew"]
+        self.hist_mean_rew = checkpoint["hist_mean_rew"]
+        self.hist_steps = checkpoint["hist_steps"]
+        self.hist_total_loss = checkpoint["hist_total_loss"]
+        self.hist_entropy_loss = checkpoint["hist_entropy_loss"]
+        self.hist_value_loss = checkpoint["hist_value_loss"]
+        self.hist_policy_loss = checkpoint["hist_policy_loss"]
+        self.counter_ep = checkpoint["counter_ep"]
+        self.counter_steps_per_ep = checkpoint["counter_steps_per_ep"]
+        self.counter_step = checkpoint["counter_step"]
+        self.ep_reward = 0
+        self.total_loss = checkpoint["total_loss"]
+        self.policy_loss = checkpoint["policy_loss"]
+        self.entropy_loss = checkpoint["entropy_loss"]
+        self.value_loss = checkpoint["value_loss"]
+        self.mean_reward = checkpoint["mean_reward"]
+        self.steps_per_ep = checkpoint["steps_per_ep"]
+        logger.info(f"Checkpoint loaded from {path}")
+
+
+class DiscreteActorCritic(Agent):
+    """
+    Agent that has a network that predicts both the action probabilities and the value
+    of the state. The value is used to calculate the Advantage (A) of and action given
+    the state -> A(s,a) = Q(s,a) - V(s).
+
+    Parameters:
+
+
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        test_env: gym.Env,
+        net: nn.Module,
+        device: torch.device,
+        gamma: float,
+        beta_entropy: float,
+        lr: float,
+        n_steps: int,
+        batch_size: int,
+        chk_path: str,
+        optimizer: str = "adam",
+        apply_softmax: bool = True,
+    ):
+        self.apply_softmax = apply_softmax
+        super().__init__(
+            env=env,
+            test_env=test_env,
+            net=net,
+            device=device,
+            gamma=gamma,
+            beta_entropy=beta_entropy,
+            lr=lr,
+            n_steps=n_steps,
+            batch_size=batch_size,
+            chk_path=chk_path,
+            optimizer=optimizer,
+        )
 
     def train(
         self,
@@ -252,101 +358,6 @@ class DiscreteActorCritic(Agent):
 
         if self.chk_path:
             self.save()
-
-    def reset(self) -> None:
-        self.hist_total_rew = []
-        self.hist_mean_rew = []
-        self.hist_steps = []
-        self.hist_total_loss = []
-        self.hist_entropy_loss = []
-        self.hist_value_loss = []
-        self.hist_policy_loss = []
-        self.counter_ep = 0
-        self.counter_steps_per_ep = 0
-        self.counter_step = 0
-        self.ep_reward = 0
-        self.total_loss = np.NaN
-        self.policy_loss = np.NaN
-        self.entropy_loss = np.NaN
-        self.value_loss = np.NaN
-        self.mean_reward = np.NaN
-        self.steps_per_ep = np.NaN
-
-    def plot_performance(
-        self,
-        metrics: List[str] = [
-            "mean_rewards",
-            "total_rewards",
-            "total_loss",
-            "policy_loss",
-            "value_loss",
-            "entropy_loss",
-        ],
-    ) -> None:
-        dic = {
-            "mean_rewards": self.hist_mean_rew,
-            "total_rewards": self.hist_total_rew,
-            "total_loss": self.hist_total_loss,
-            "policy_loss": self.hist_policy_loss,
-            "value_loss": self.hist_value_loss,
-            "entropy_loss": self.hist_entropy_loss,
-        }
-
-        for metric in metrics:
-            plt.plot(self.hist_steps, dic[metric], label=metric)
-            plt.legend()
-            plt.show()
-
-    def save(self, path: Optional[str] = None) -> None:
-        path = path or self.chk_path
-        torch.save(
-            {
-                "model_state_dict": self.net.state_dict(),
-                "optimizer_state_dict": self.optimizer.state_dict(),
-                "hist_total_rew": self.hist_total_rew,
-                "hist_mean_rew": self.hist_mean_rew,
-                "hist_steps": self.hist_steps,
-                "hist_total_loss": self.hist_total_loss,
-                "hist_entropy_loss": self.hist_entropy_loss,
-                "hist_value_loss": self.hist_value_loss,
-                "hist_policy_loss": self.hist_policy_loss,
-                "counter_ep": self.counter_ep,
-                "counter_steps_per_ep": self.counter_steps_per_ep,
-                "counter_step": self.counter_step,
-                "total_loss": self.total_loss,
-                "policy_loss": self.policy_loss,
-                "entropy_loss": self.entropy_loss,
-                "value_loss": self.value_loss,
-                "mean_reward": self.mean_reward,
-                "steps_per_ep": self.steps_per_ep,
-            },
-            path,
-        )
-        logger.info(f"Checkpoint saved to {path}")
-
-    def load(self, path: Optional[str] = None) -> None:
-        path = path or self.chk_path
-        checkpoint = torch.load(path)
-        self.net.load_state_dict(checkpoint["model_state_dict"])
-        self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-        self.hist_total_rew = checkpoint["hist_total_rew"]
-        self.hist_mean_rew = checkpoint["hist_mean_rew"]
-        self.hist_steps = checkpoint["hist_steps"]
-        self.hist_total_loss = checkpoint["hist_total_loss"]
-        self.hist_entropy_loss = checkpoint["hist_entropy_loss"]
-        self.hist_value_loss = checkpoint["hist_value_loss"]
-        self.hist_policy_loss = checkpoint["hist_policy_loss"]
-        self.counter_ep = checkpoint["counter_ep"]
-        self.counter_steps_per_ep = checkpoint["counter_steps_per_ep"]
-        self.counter_step = checkpoint["counter_step"]
-        self.ep_reward = 0
-        self.total_loss = checkpoint["total_loss"]
-        self.policy_loss = checkpoint["policy_loss"]
-        self.entropy_loss = checkpoint["entropy_loss"]
-        self.value_loss = checkpoint["value_loss"]
-        self.mean_reward = checkpoint["mean_reward"]
-        self.steps_per_ep = checkpoint["steps_per_ep"]
-        logger.info(f"Checkpoint loaded from {path}")
 
     def _get_train_policy(self) -> BasePolicy:
         return DiscreteCategoricalDistributionPolicy(
