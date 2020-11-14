@@ -13,6 +13,7 @@ from typing import Optional
 from src import utils
 from src.logger import logger
 from src.matlab_api import set_parameters
+from src.utils import read_weather_csv
 
 PVSimResult = namedtuple("PVSimResult", ["power", "voltage", "current"])
 
@@ -92,8 +93,9 @@ class PVArray:
         if isinstance(irradiance, (int, float)):
             irradiance = [irradiance]
             cell_temp = [cell_temp]
-        assert isinstance(irradiance[0], (int, float))
-        assert isinstance(cell_temp[0], (int, float))
+        # print(type(irradiance[0]))
+        # assert isinstance(irradiance[0], (int, float))
+        # assert isinstance(cell_temp[0], (int, float))
         assert len(cell_temp) == len(
             irradiance
         ), "irradiance and cell_temp lists must be the same length"
@@ -101,16 +103,14 @@ class PVArray:
         logger.info("Calculating true MPP . . .")
         pv_voltages, pv_powers, pv_currents = [], [], []
         float_precision = self.float_precision
-        self.float_precision = 8
+        self.float_precision = 12
 
         for g, t in tqdm(
             list(zip(irradiance, cell_temp)),
             desc="Calculating true MPP",
             ascii=True,
         ):
-            result = self._get_true_mpp(
-                round(g, float_precision), round(t, float_precision), ftol
-            )
+            result = self._get_true_mpp(g, t, ftol)
             pv_voltages.append(round(result.voltage, float_precision))
             pv_powers.append(round(result.power, float_precision))
             pv_currents.append(round(result.current, float_precision))
@@ -138,8 +138,8 @@ class PVArray:
             v_step: delta voltage for incrementing/decrementing the load voltage
 
         """
-        assert isinstance(irradiance[0], (int, float))
-        assert isinstance(cell_temp[0], (int, float))
+        # assert isinstance(irradiance[0], (int, float))
+        # assert isinstance(cell_temp[0], (int, float))
         assert len(cell_temp) == len(
             irradiance
         ), "irradiance and cell_temp lists must be the same length"
@@ -197,7 +197,7 @@ class PVArray:
         self,
         irradiance: float,
         cell_temp: float,
-        ftol: float = 1e-06,
+        ftol: float = 1e-12,
     ) -> PVSimResult:
         neg_power_fn = lambda v, g, t: self.simulate(v[0], g, t)[0] * -1
         min_fn = partial(neg_power_fn, g=irradiance, t=cell_temp)
@@ -291,20 +291,23 @@ class PVArray:
 
 if __name__ == "__main__":
     pvarray = PVArray.from_json(
-        os.path.join("parameters", "pvarray_01.json"), new_engine=False
+        os.path.join("parameters", "01_pvarray.json"),
+        new_engine=False,
+        ckp_path=os.path.join("data", "01_pvarray_iv.json"),
     )
-    g = [200, 400, 400, 600, 600, 800, 1000, 1000, 1000, 800, 800, 600, 400, 200] * 4
-    t = [25] * len(g)
+    weather = read_weather_csv(os.path.join("data", "weather_sim.csv"))
+    g = weather["Irradiance"]
+    t = weather["Temperature"]
 
     real = pvarray.get_true_mpp(g, t)
     po = pvarray.get_po_mpp(g, t, v0=25, v_step=0.26)
 
-    plt.plot(real.power, label="Real P")
     plt.plot(po.power, label="PO P")
+    plt.plot(real.power, label="Real P")
     plt.legend()
     plt.show()
 
-    plt.plot(real.voltage, label="Real V")
     plt.plot(po.voltage, label="PO V")
+    plt.plot(real.voltage, label="Real V")
     plt.legend()
     plt.show()
