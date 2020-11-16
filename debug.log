@@ -7170,3 +7170,31 @@ INFO 2020-11-15 21:42:36,351 [pv_array.py:__init__:45] MATLAB engine initializat
 INFO 2020-11-15 21:42:59,738 [pv_array.py:_init:180] Model loaded succesfully.
 INFO 2020-11-15 21:42:59,743 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
 INFO 2020-11-15 21:42:59,743 [pv_array.py:get_true_mpp:100] Calculating true MPP . . .
+INFO 2020-11-16 09:24:47,871 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-16 09:24:47,873 [<ipython-input-1-f73468fdf509>:__init__:35] Starting MATLAB engine . . .
+INFO 2020-11-16 09:25:20,894 [<ipython-input-1-f73468fdf509>:__init__:45] MATLAB engine initializated.
+INFO 2020-11-16 09:26:04,504 [<ipython-input-1-f73468fdf509>:_init:180] Model loaded succesfully.
+INFO 2020-11-16 09:26:04,522 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-16 09:26:04,524 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-16 09:26:04,551 [<ipython-input-1-f73468fdf509>:get_true_mpp:100] Calculating true MPP . . .
+INFO 2020-11-16 09:26:05,740 [<ipython-input-1-f73468fdf509>:get_po_mpp:142] Running P&O, step=0.26 volts . . .
+INFO 2020-11-16 09:53:40,320 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-16 09:53:40,322 [pv_array.py:__init__:35] Starting MATLAB engine . . .
+INFO 2020-11-16 09:53:44,751 [pv_array.py:__init__:45] MATLAB engine initializated.
+INFO 2020-11-16 09:54:04,866 [pv_array.py:_init:180] Model loaded succesfully.
+INFO 2020-11-16 09:54:04,874 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-16 09:54:04,876 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-16 09:54:04,887 [utils.py:load_dict:34] Dictionary readed from parameters\01_pvarray.json
+INFO 2020-11-16 09:54:04,888 [pv_array.py:__init__:35] Starting MATLAB engine . . .
+INFO 2020-11-16 09:54:10,120 [pv_array.py:__init__:45] MATLAB engine initializated.
+INFO 2020-11-16 09:54:31,744 [pv_array.py:_init:180] Model loaded succesfully.
+INFO 2020-11-16 09:54:31,753 [utils.py:load_dict:34] Dictionary readed from data\01_pvarray_iv.json
+INFO 2020-11-16 09:54:31,754 [utils.py:read_weather_csv:12] Reading data\weather_sim.csv . . .
+INFO 2020-11-16 09:56:48,927 [pv_array.py:get_true_mpp:100] Calculating true MPP . . .
+INFO 2020-11-16 09:56:50,090 [pv_array.py:get_po_mpp:142] Running P&O, step=0.2 volts . . .
+INFO 2020-11-16 09:56:50,749 [pv_env.py:render_vs_true:145] PO Efficiency=96.37724791186407
+INFO 2020-11-16 09:56:50,750 [pv_env.py:render_vs_true:146] RL Efficiency=92.85365433743627
+INFO 2020-11-16 09:56:51,701 [pv_array.py:get_true_mpp:100] Calculating true MPP . . .
+INFO 2020-11-16 09:56:52,793 [pv_array.py:get_po_mpp:142] Running P&O, step=0.2 volts . . .
+INFO 2020-11-16 09:56:53,419 [pv_env.py:render_vs_true:145] PO Efficiency=95.54634791857649
+INFO 2020-11-16 09:56:53,421 [pv_env.py:render_vs_true:146] RL Efficiency=91.3071344470415

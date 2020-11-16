@@ -8,3 +8,4 @@ _examples
 *.autosave
 _old*
 src/matlab_model.slx.r2019a
+debug.log

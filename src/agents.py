@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 import gym
 import numpy as np
@@ -24,7 +24,10 @@ class AgentABC:
     def __call__(self, obs: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
-    def train(self) -> None:
+    def learn(self) -> None:
+        raise NotImplementedError
+
+    def train_net(self) -> None:
         raise NotImplementedError
 
     def test(self, num_episodes: int):
@@ -40,6 +43,9 @@ class AgentABC:
         raise NotImplementedError
 
     def load(self, path: Optional[str]) -> None:
+        raise NotImplementedError
+
+    def _prepare_batch(self) -> Tuple[torch.Tensor]:
         raise NotImplementedError
 
     def _get_train_policy(self) -> BasePolicy:
@@ -103,6 +109,35 @@ class Agent(AgentABC):
 
     def __call__(self, obs: np.ndarray) -> np.ndarray:
         return self.policy(obs)
+
+    def learn(
+        self,
+        steps: int,
+        verbose_every: Optional[int] = 0,
+        save_every: Optional[int] = 0,
+    ):
+
+        for _ in tqdm(range(steps)):
+            self.counter_step += 1
+            batch = self._prepare_batch()
+            self.train_net(*batch)
+
+            if verbose_every:
+                if self.counter_step % verbose_every == 0:
+                    print(
+                        "\n",
+                        f"{self.counter_step}: loss={self.total_loss:.6f}, ",
+                        f"mean reward={self.mean_reward:.2f}, ",
+                        f"steps/ep={self.steps_per_ep}, ",
+                        f"episodes={self.counter_ep}",
+                    )
+
+            if save_every and self.chk_path:
+                if self.counter_step % save_every == 0:
+                    self.save()
+
+        if self.chk_path:
+            self.save()
 
     def test(self, num_episodes: int = 1):
         episodes = self.exp_test_source.play_episodes(episodes=num_episodes)
@@ -175,7 +210,6 @@ class Agent(AgentABC):
                 "hist_value_loss": self.hist_value_loss,
                 "hist_policy_loss": self.hist_policy_loss,
                 "counter_ep": self.counter_ep,
-                "counter_steps_per_ep": self.counter_steps_per_ep,
                 "counter_step": self.counter_step,
                 "total_loss": self.total_loss,
                 "policy_loss": self.policy_loss,
@@ -201,8 +235,8 @@ class Agent(AgentABC):
         self.hist_value_loss = checkpoint["hist_value_loss"]
         self.hist_policy_loss = checkpoint["hist_policy_loss"]
         self.counter_ep = checkpoint["counter_ep"]
-        self.counter_steps_per_ep = checkpoint["counter_steps_per_ep"]
         self.counter_step = checkpoint["counter_step"]
+        self.counter_steps_per_ep = 0
         self.ep_reward = 0
         self.total_loss = checkpoint["total_loss"]
         self.policy_loss = checkpoint["policy_loss"]
@@ -218,10 +252,6 @@ class DiscreteActorCritic(Agent):
     Agent that has a network that predicts both the action probabilities and the value
     of the state. The value is used to calculate the Advantage (A) of and action given
     the state -> A(s,a) = Q(s,a) - V(s).
-
-    Parameters:
-
-
     """
 
     def __init__(
@@ -254,114 +284,87 @@ class DiscreteActorCritic(Agent):
             optimizer=optimizer,
         )
 
-    def train(
-        self,
-        steps: int,
-        verbose_every: Optional[int] = 0,
-        save_every: Optional[int] = 0,
-    ):
+    def train_net(
+        self, states: torch.Tensor, actions: torch.Tensor, values_target: torch.Tensor
+    ) -> None:
+        self.optimizer.zero_grad()
+        logits, values = self.net(states)
+        values = values.squeeze()
+        loss_value = F.mse_loss(values_target, values)
+        self.value_loss = loss_value.item()
 
-        for _ in tqdm(range(steps)):
-            self.counter_step += 1
+        log_prob_actions = F.log_softmax(logits, dim=1)
+        log_prob_chosen = log_prob_actions.gather(1, actions.unsqueeze(1)).squeeze()
+        advantage = values_target - values.detach()
+        loss_policy = (log_prob_chosen * advantage).mean()
+        self.policy_loss = loss_policy.item()
 
-            states = []
-            actions = []
-            last_states = []
-            values = []
-            dones = []
+        prob_actions = F.softmax(logits, dim=1)
+        entropy_t = -(prob_actions * log_prob_actions).sum(dim=1).mean()
+        loss_entropy = -self.beta_entropy * entropy_t
+        self.entropy_loss = loss_entropy.item()
 
-            for exp in next(self.exp_train_source):
-                self.ep_reward += exp.reward
-                self.counter_steps_per_ep += exp.steps
+        loss_total = -loss_policy + loss_value + loss_entropy
+        loss_total.backward()
+        self.optimizer.step()
+        self.total_loss = loss_total.item()
 
-                states.append(exp.state)
-                actions.append(exp.action)
-                values.append(exp.discounted_reward)
+    def _prepare_batch(self) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        states = []
+        actions = []
+        last_states = []
+        values = []
+        dones = []
 
-                if exp.last_state is None:
-                    dones.append(True)
-                    last_states.append(
-                        exp.state
-                    )  # as a placeholder, we'll mask this val
+        for exp in next(self.exp_train_source):
+            self.ep_reward += exp.reward
+            self.counter_steps_per_ep += exp.steps
 
-                    self.counter_ep += 1
-                    self.steps_per_ep = self.counter_steps_per_ep
+            states.append(exp.state)
+            actions.append(exp.action)
+            values.append(exp.discounted_reward)
 
-                    self.hist_total_rew.append(self.ep_reward)
-                    self.mean_reward = np.mean(self.hist_total_rew[-100:])
-                    self.hist_mean_rew.append(self.mean_reward)
-                    self.hist_steps.append(self.counter_step)
-                    self.hist_total_loss.append(self.total_loss)
-                    self.hist_entropy_loss.append(self.entropy_loss)
-                    self.hist_value_loss.append(self.value_loss)
-                    self.hist_policy_loss.append(self.policy_loss)
+            if exp.last_state is None:
+                dones.append(True)
+                last_states.append(exp.state)  # as a placeholder, we'll mask this val
 
-                    self.ep_reward = 0
-                    self.counter_steps_per_ep = 0
-                else:
-                    dones.append(False)
-                    last_states.append(exp.last_state)
+                self.counter_ep += 1
+                self.steps_per_ep = self.counter_steps_per_ep
 
-            last_states_t = torch.tensor(last_states, dtype=torch.float32).to(
-                self.device
+                self.hist_total_rew.append(self.ep_reward)
+                self.mean_reward = np.mean(self.hist_total_rew[-100:])
+                self.hist_mean_rew.append(self.mean_reward)
+                self.hist_steps.append(self.counter_step)
+                self.hist_total_loss.append(self.total_loss)
+                self.hist_entropy_loss.append(self.entropy_loss)
+                self.hist_value_loss.append(self.value_loss)
+                self.hist_policy_loss.append(self.policy_loss)
+
+                self.ep_reward = 0
+                self.counter_steps_per_ep = 0
+            else:
+                dones.append(False)
+                last_states.append(exp.last_state)
+
+        last_states_t = torch.tensor(last_states, dtype=torch.float32).to(self.device)
+        states_t = torch.tensor(states, dtype=torch.float32).to(self.device)
+        actions_t = torch.tensor(actions, dtype=torch.int64).to(self.device)
+
+        with torch.no_grad():
+            values_last = (
+                self.net(last_states_t)[1].squeeze() * self.gamma ** self.n_steps
             )
-            states_t = torch.tensor(states, dtype=torch.float32).to(self.device)
-            actions_t = torch.tensor(actions, dtype=torch.int64).to(self.device)
+        values_last[dones] = 0  # the value of terminal states is zero
 
-            with torch.no_grad():
-                values_last = (
-                    self.net(last_states_t)[1].squeeze() * self.gamma ** self.n_steps
-                )
-            values_last[dones] = 0  # the value of terminal states is zero
+        # Normalize the rewards
+        values_target_t = torch.tensor(values, dtype=torch.float32).to(self.device)
+        std, mean = torch.std_mean(values_target_t)
+        values_target_t -= mean
+        values_target_t /= std + 1e-6
 
-            # Normalize the rewards
-            values_target_t = torch.tensor(values, dtype=torch.float32).to(self.device)
-            std, mean = torch.std_mean(values_target_t)
-            values_target_t -= mean
-            values_target_t /= std + 1e-6
+        values_target_t += values_last
 
-            values_target_t += values_last
-
-            self.optimizer.zero_grad()
-            logits_t, values_t = self.net(states_t)
-            values_t = values_t.squeeze()
-            loss_value_t = F.mse_loss(values_target_t, values_t)
-            self.value_loss = loss_value_t.item()
-
-            log_prob_actions_t = F.log_softmax(logits_t, dim=1)
-            log_prob_chosen = log_prob_actions_t.gather(
-                1, actions_t.unsqueeze(1)
-            ).squeeze()
-            advantage_t = values_target_t - values_t.detach()
-            loss_policy_t = (log_prob_chosen * advantage_t).mean()
-            self.policy_loss = loss_policy_t.item()
-
-            prob_actions_t = F.softmax(logits_t, dim=1)
-            entropy_t = -(prob_actions_t * log_prob_actions_t).sum(dim=1).mean()
-            loss_entropy_t = -self.beta_entropy * entropy_t
-            self.entropy_loss = loss_entropy_t.item()
-
-            loss_total_t = -loss_policy_t + loss_value_t + loss_entropy_t
-            loss_total_t.backward()
-            self.optimizer.step()
-            self.total_loss = loss_total_t.item()
-
-            if verbose_every:
-                if self.counter_step % verbose_every == 0:
-                    print(
-                        "\n",
-                        f"{self.counter_step}: loss={self.total_loss:.6f}, ",
-                        f"mean reward={self.mean_reward:.2f}, ",
-                        f"steps/ep={self.steps_per_ep}, ",
-                        f"episodes={self.counter_ep}",
-                    )
-
-            if save_every and self.chk_path:
-                if self.counter_step % save_every == 0:
-                    self.save()
-
-        if self.chk_path:
-            self.save()
+        return states_t, actions_t, values_target_t
 
     def _get_train_policy(self) -> BasePolicy:
         return DiscreteCategoricalDistributionPolicy(
@@ -416,7 +419,8 @@ class ContinuosActorCritic(DiscreteActorCritic):
             optimizer=optimizer,
         )
 
-    # def train
+    def train_net(self):
+        pass
 
     def _get_train_policy(self, apply_softmax: bool) -> BasePolicy:
         return DiscreteCategoricalDistributionPolicy(
