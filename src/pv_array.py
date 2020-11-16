@@ -81,7 +81,7 @@ class PVArray:
         self,
         irradiance: Union[float, List[float]],
         cell_temp: Union[float, List[float]],
-        ftol: float = 1e-06,
+        ftol: float = 1e-09,
     ) -> PVSimResult:
         """Get the real MPP for the specified inputs
 
@@ -93,9 +93,6 @@ class PVArray:
         if isinstance(irradiance, (int, float)):
             irradiance = [irradiance]
             cell_temp = [cell_temp]
-        # print(type(irradiance[0]))
-        # assert isinstance(irradiance[0], (int, float))
-        # assert isinstance(cell_temp[0], (int, float))
         assert len(cell_temp) == len(
             irradiance
         ), "irradiance and cell_temp lists must be the same length"
@@ -138,8 +135,6 @@ class PVArray:
             v_step: delta voltage for incrementing/decrementing the load voltage
 
         """
-        # assert isinstance(irradiance[0], (int, float))
-        # assert isinstance(cell_temp[0], (int, float))
         assert len(cell_temp) == len(
             irradiance
         ), "irradiance and cell_temp lists must be the same length"

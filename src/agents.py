@@ -156,6 +156,8 @@ class Agent(AgentABC):
 
         for metric in metrics:
             plt.plot(self.hist_steps, dic[metric], label=metric)
+            if "loss" in metric and not "entropy" in metric:
+                plt.yscale("log")
             plt.legend()
             plt.show()
 
@@ -314,9 +316,11 @@ class DiscreteActorCritic(Agent):
 
             # Normalize the rewards
             values_target_t = torch.tensor(values, dtype=torch.float32).to(self.device)
-            # std, mean = torch.std_mean(values_target_t)
-            # values_target_t -= mean
-            # values_target_t /= std + 1e-6
+            std, mean = torch.std_mean(values_target_t)
+            values_target_t -= mean
+            values_target_t /= std + 1e-6
+
+            values_target_t += values_last
 
             self.optimizer.zero_grad()
             logits_t, values_t = self.net(states_t)
