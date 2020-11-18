@@ -36,5 +36,5 @@ def test_discrete_ac_cartpole():
         batch_size=BATCH_SIZE,
         chk_path=None,
     )
-    agent.train(1000, verbose_every=0)
+    agent.learn(1000, verbose_every=0)
     assert agent.test(num_episodes=100) > 195
