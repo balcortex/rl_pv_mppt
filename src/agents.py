@@ -489,3 +489,104 @@ class ContinuosActorCritic(Agent):
     #     p1 = 1 / torch.sqrt(2 * math.pi * var)
     #     p2 = torch.exp((torch.square(actions - mean)) / (2 * var))
     #     return p1 * p2
+
+
+class ContinuosActorCritic2(Agent):
+    """
+    Agent that has a network that predicts both the action probabilities and the value
+    of the state. The value is used to calculate the Advantage (A) of and action given
+    the state -> A(s,a) = Q(s,a) - V(s).
+    """
+
+    def __init__(
+        self,
+        env: gym.Env,
+        test_env: gym.Env,
+        net: nn.Module,
+        device: torch.device,
+        gamma: float,
+        beta_entropy: float,
+        lr: float,
+        n_steps: int,
+        batch_size: int,
+        chk_path: str,
+        optimizer: str = "adam",
+        value_net=None,
+    ):
+        self.value_net = value_net
+        self.value_optimizer = torch.optim.Adam(value_net.parameters(), lr=0.001)
+        super().__init__(
+            env=env,
+            test_env=test_env,
+            net=net,
+            device=device,
+            gamma=gamma,
+            beta_entropy=beta_entropy,
+            lr=lr,
+            n_steps=n_steps,
+            batch_size=batch_size,
+            chk_path=chk_path,
+            optimizer=optimizer,
+        )
+
+    def train_net(
+        self, states: torch.Tensor, actions: torch.Tensor, values_target: torch.Tensor
+    ) -> None:
+
+        self.optimizer.zero_grad()
+        self.value_optimizer.zero_grad()
+        mean, var, _ = self.net(states)
+        values = self.value_net(states)
+        # var = std ** 2
+        values = values.squeeze()
+
+        loss_value = F.mse_loss(values, values_target)
+        self.value_loss = loss_value.item()
+
+        advantage = (values_target - values.detach()).unsqueeze(-1)
+        log_prob = advantage * self._logprob(mean, var, actions)
+        # print(f"{log_prob=}")
+        loss_policy = -log_prob.mean()
+        self.policy_loss = loss_policy.item()
+
+        # prob_actions = F.softmax(logits, dim=1)
+        # entropy_t = -(prob_actions * log_prob_actions).sum(dim=1).mean()
+        # loss_entropy = -self.beta_entropy * entropy_t
+        # self.entropy_loss = loss_entropy.item()
+
+        entropy_t = -(torch.log(2 * math.pi * var) + 1) / 2
+        loss_entropy = self.beta_entropy * entropy_t.mean()
+        self.entropy_loss = loss_entropy.item()
+
+        loss_total = loss_policy + loss_entropy
+        loss_value.backward()
+        loss_total.backward()
+        self.value_optimizer.step()
+        self.optimizer.step()
+        self.total_loss = loss_total.item()
+
+    def _value_state(self, states: torch.Tensor) -> torch.Tensor:
+        with torch.no_grad():
+            values = self.value_net(states).squeeze()
+        return values
+
+    def _get_train_policy(self) -> BasePolicy:
+        return GaussianPolicy(
+            net=self.net,
+            device=self.device,
+            add_batch_dim=True,
+        )
+
+    def _get_test_policy(self) -> BasePolicy:
+        return GaussianPolicy(
+            net=self.net,
+            device=self.device,
+            add_batch_dim=True,
+            test=True,
+        )
+
+    def _logprob(self, mean, var, actions):
+        # var = torch.square(std)
+        p1 = -((mean - actions) ** 2) / (2 * var.clamp(min=1e-3))
+        p2 = -torch.log(torch.sqrt(2 * math.pi * var))
+        return p1 + p2
