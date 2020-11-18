@@ -17,6 +17,7 @@ class ExperienceSorce:
         self.policy = policy
         self.obs = self.env.reset()
         self.done = False
+        self.render = False
 
     def __iter__(self):
         return self
@@ -29,8 +30,10 @@ class ExperienceSorce:
             self.obs = self.env.reset()
             self.done = False
         obs = self.obs
-        action = int(self.policy(obs))
+        action = self.policy(obs)
         new_obs, reward, done, _ = self.env.step(action)
+        if self.render:
+            self.env.render()
         if done:
             self.done = True
             return Experience(state=obs, action=action, reward=reward, last_state=None)

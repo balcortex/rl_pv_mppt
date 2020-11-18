@@ -101,17 +101,34 @@ def test_gaussian_policy_single_obs():
 
     net = MyNet()
     device = torch.device("cpu")
-    policy = GaussianPolicy(net, device)
+    policy = GaussianPolicy(net, device, add_batch_dim=True)
     states = np.array([1.0, 2.0])
     action = policy(states)
     assert action.size == 1
 
 
-def test_gaussian_policy_multiple_obs():
+def test_gaussian_policy_single_obs_test():
     class MyNet(torch.nn.Module):
         def __init__(self):
             super().__init__()
-            self.net = torch.nn.Linear(2, 1)
+            self.net = torch.nn.modules.Identity()
+
+        def __call__(self, x):
+            return self.net(x), self.net(x), self.net(x)
+
+    net = MyNet()
+    device = torch.device("cpu")
+    policy = GaussianPolicy(net, device, add_batch_dim=True, test=True)
+    states = np.array([1.0])
+    action = policy(states)
+    assert action == 1.0
+
+
+def test_gaussian_policy_multi_obs():
+    class MyNet(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.net = torch.nn.modules.Identity()
 
         def __call__(self, x):
             return (self.net(x),) * 3
@@ -119,6 +136,23 @@ def test_gaussian_policy_multiple_obs():
     net = MyNet()
     device = torch.device("cpu")
     policy = GaussianPolicy(net, device)
-    states = np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
+    states = np.array([[1.0], [2.0], [3.0]])
     action = policy(states)
-    assert action.size == 3
+    assert action.shape == (3, 1)
+
+
+def test_gaussian_policy_multi_obs_test():
+    class MyNet(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.net = torch.nn.modules.Identity()
+
+        def __call__(self, x):
+            return (self.net(x),) * 3
+
+    net = MyNet()
+    device = torch.device("cpu")
+    policy = GaussianPolicy(net, device, test=True)
+    states = np.array([[1.0], [2.0], [3.0]])
+    action = policy(states)
+    assert np.array_equal(action, np.array([[1.0], [2.0], [3.0]]))

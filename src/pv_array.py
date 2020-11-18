@@ -23,7 +23,7 @@ class PVArray:
         self,
         params: Dict,
         ckp_path: str,
-        f_precision: int = 3,
+        f_precision: int = 1,
         new_engine=True,
     ):
         """PV Array Model, interface between MATLAB and Python

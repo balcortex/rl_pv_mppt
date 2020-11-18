@@ -137,18 +137,38 @@ class DiscreteGreedyPolicy(DiscreteCategoricalDistributionPolicy):
 
 
 class GaussianPolicy(BasePolicy):
-    def __init__(self, net: torch.nn.Module, device: Union[str, torch.device]):
+    def __init__(
+        self,
+        net: torch.nn.Module,
+        device: Union[str, torch.device],
+        add_batch_dim: bool = False,
+        test: bool = False,
+    ):
         self.net = net
         self.device = device
+        self.add_batch_dim = add_batch_dim
+        self.test = test
 
     @torch.no_grad()
     def __call__(self, states: np.ndarray):
         states_v = torch.tensor(states, dtype=torch.float32).to(self.device)
+        # print(states_v)
 
-        mean_t, std_t, _ = self.net(states_v)
-        actions = torch.normal(mean_t, std_t).squeeze()
+        # mean_t, std_t, _ = self.net(states_v)
+        mean_t, var_t, _ = self.net(states_v)
+        std_t = torch.sqrt(var_t)
+        if self.test:
+            actions = mean_t
+        else:
+            actions = torch.normal(mean_t, std_t)
 
-        return actions.cpu().numpy()
+        # actions = actions.clamp(-5, 5)
+        # print(actions)
+
+        if self.add_batch_dim:
+            return actions.cpu().numpy()[0]
+        else:
+            return actions.cpu().numpy()
 
 
 if __name__ == "__main__":

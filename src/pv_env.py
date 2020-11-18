@@ -85,7 +85,8 @@ class PVEnv(PVEnvBase):
         self.done = False
 
         # v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
-        v = np.random.randint(2, self.pvarray.voc)
+        # v = np.random.randint(2, self.pvarray.voc)
+        v = 28
 
         return self._store_step(v)
 

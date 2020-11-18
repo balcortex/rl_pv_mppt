@@ -23,11 +23,16 @@ class ActorCriticNetwork(nn.Module):
     def __init__(self, input_size: int, n_actions: int, hidden_units: int = 128):
         super().__init__()
 
-        self.base = nn.Sequential(nn.Linear(input_size, hidden_units), nn.ReLU())
-        self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Tanh())
-        self.std = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Softplus())
-        self.value = nn.Sequential(nn.Linear(hidden_units, n_actions))
+        self.base1 = nn.Sequential(nn.Linear(input_size, hidden_units), nn.ReLU())
+        self.base2 = nn.Sequential(nn.Linear(hidden_units, hidden_units), nn.ReLU())
+        self.base3 = nn.Sequential(nn.Linear(hidden_units, hidden_units), nn.ReLU())
+        # self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Tanh())
+        self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions))
+        self.var = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Softplus())
+        self.value = nn.Sequential(nn.Linear(hidden_units, 1))
 
     def __call__(self, x):
-        x = self.base(x)
-        return self.mean(x), self.std(x), self.value(x)
+        x = self.base1(x)
+        x = self.base2(x)
+        x = self.base3(x)
+        return self.mean(x), self.var(x), self.value(x)
