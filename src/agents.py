@@ -460,6 +460,7 @@ class ContinuosActorCritic(Agent):
     def _get_train_policy(self) -> BasePolicy:
         return GaussianPolicy(
             net=self.net,
+            env=self.env,
             device=self.device,
             add_batch_dim=True,
         )
@@ -467,6 +468,7 @@ class ContinuosActorCritic(Agent):
     def _get_test_policy(self) -> BasePolicy:
         return GaussianPolicy(
             net=self.net,
+            env=self.env,
             device=self.device,
             add_batch_dim=True,
             test=True,

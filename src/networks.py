@@ -26,8 +26,8 @@ class ActorCriticNetwork(nn.Module):
         self.base1 = nn.Sequential(nn.Linear(input_size, hidden_units), nn.ReLU())
         self.base2 = nn.Sequential(nn.Linear(hidden_units, hidden_units), nn.ReLU())
         self.base3 = nn.Sequential(nn.Linear(hidden_units, hidden_units), nn.ReLU())
-        # self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Tanh())
-        self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions))
+        self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Tanh())
+        # self.mean = nn.Sequential(nn.Linear(hidden_units, n_actions))
         self.var = nn.Sequential(nn.Linear(hidden_units, n_actions), nn.Softplus())
         self.value = nn.Sequential(nn.Linear(hidden_units, 1))
 

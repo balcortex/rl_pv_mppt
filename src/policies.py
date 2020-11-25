@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+import gym
 
 from typing import Union, Optional
 
@@ -140,6 +141,7 @@ class GaussianPolicy(BasePolicy):
     def __init__(
         self,
         net: torch.nn.Module,
+        env: gym.Env,
         device: Union[str, torch.device],
         add_batch_dim: bool = False,
         test: bool = False,
@@ -148,13 +150,12 @@ class GaussianPolicy(BasePolicy):
         self.device = device
         self.add_batch_dim = add_batch_dim
         self.test = test
+        self.low = env.action_space.low[0]
+        self.high = env.action_space.high[0]
 
     @torch.no_grad()
     def __call__(self, states: np.ndarray):
         states_v = torch.tensor(states, dtype=torch.float32).to(self.device)
-        # print(states_v)
-
-        # mean_t, std_t, _ = self.net(states_v)
         mean_t, var_t, _ = self.net(states_v)
         std_t = torch.sqrt(var_t)
         if self.test:
@@ -162,13 +163,17 @@ class GaussianPolicy(BasePolicy):
         else:
             actions = torch.normal(mean_t, std_t)
 
-        # actions = actions.clamp(-5, 5)
+        actions = self._unscale_actions(actions)
+        actions = actions.clamp(self.low, self.high)
         # print(actions)
 
         if self.add_batch_dim:
             return actions.cpu().numpy()[0]
         else:
             return actions.cpu().numpy()
+
+    def _unscale_actions(self, scled_actions: torch.Tensor) -> torch.Tensor:
+        return self.low + (scled_actions + 1) * (self.high - self.low) / (2)
 
 
 if __name__ == "__main__":
