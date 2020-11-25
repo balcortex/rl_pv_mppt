@@ -66,12 +66,14 @@ class PVEnv(PVEnvBase):
         states: List[str],
         reward_fn: callable,
         seed: Optional[int] = None,
+        v0: Optional[float] = None,
     ) -> None:
 
         self.pvarray = pvarray
         self.weather = weather_df
         self.states = states
         self.reward_fn = reward_fn
+        self.v0 = v0
         if seed:
             np.random.seed(seed)
 
@@ -84,9 +86,7 @@ class PVEnv(PVEnvBase):
         self.step_idx = 0
         self.done = False
 
-        # v = np.random.randint(int(self.pvarray.voc * 0.7), int(self.pvarray.voc * 0.9))
-        # v = np.random.randint(2, self.pvarray.voc)
-        v = 28
+        v = self.v0 or np.random.randint(2, self.pvarray.voc)
 
         return self._store_step(v)
 
@@ -187,8 +187,8 @@ class PVEnv(PVEnvBase):
 
     def _get_action_space(self) -> gym.Space:
         return gym.spaces.Box(
-            low=-np.inf,
-            high=np.inf,
+            low=-self.pvarray.voc / 2,
+            high=self.pvarray.voc / 2,
             shape=(1,),
             dtype=np.float32,
         )
@@ -222,6 +222,7 @@ class PVEnvDiscrete(PVEnv):
         reward_fn: callable,
         actions: List[float],
         seed: Optional[int] = None,
+        v0: Optional[float] = None,
     ) -> None:
         self.actions = actions
         super().__init__(
@@ -230,6 +231,7 @@ class PVEnvDiscrete(PVEnv):
             states,
             reward_fn,
             seed,
+            v0,
         )
 
     def _get_delta_v(self, action: int) -> float:

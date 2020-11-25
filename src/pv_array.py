@@ -4,6 +4,7 @@ from functools import partial, lru_cache
 from typing import Dict, List, Union
 import matplotlib.pyplot as plt
 
+import numpy as np
 import matlab.engine
 from scipy.optimize import minimize
 from tqdm import tqdm
@@ -24,7 +25,7 @@ class PVArray:
         params: Dict,
         ckp_path: str,
         f_precision: int = 1,
-        new_engine=True,
+        new_engine: bool = True,
     ):
         """PV Array Model, interface between MATLAB and Python
 
@@ -63,6 +64,9 @@ class PVArray:
             irradiance: solar irradiance [W/m^2]
             temperature: cell temperature [celsius]
         """
+        if isinstance(voltage, np.ndarray):
+            voltage = voltage[0]
+
         v = round(voltage, self.float_precision)
         g = round(irradiance, self.float_precision)
         t = round(cell_temp, self.float_precision)
