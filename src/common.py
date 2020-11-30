@@ -21,4 +21,6 @@ class History:
     p_norm: list = field(default_factory=list)
     v_norm: list = field(default_factory=list)
     i_norm: list = field(default_factory=list)
+    dp_norm: list = field(default_factory=list)
+    dv_norm: list = field(default_factory=list)
     deg: list = field(default_factory=list)

@@ -176,5 +176,36 @@ class GaussianPolicy(BasePolicy):
         return self.low + (scled_actions + 1) * (self.high - self.low) / (2)
 
 
+class PerturbObservePolicy(BasePolicy):
+    """
+    Perturb & Observe algorithm
+
+    Parameters:
+        v_step: magnitude of the perturbation
+        dv_index: index of the dv state (v - v_old)
+        dp_index: index of the dp state (p - p_old)
+    """
+
+    def __init__(self, v_step: float, dv_index: int = 0, dp_index: int = 1):
+        self.v_step = v_step
+        self.dv_index = dv_index
+        self.dp_index = dp_index
+
+    def __call__(self, states: np.ndarray) -> float:
+        delta_p = states[self.dp_index]
+        delta_v = states[self.dv_index]
+
+        if delta_p >= 0:
+            if delta_v >= 0:
+                return self.v_step
+            else:
+                return -self.v_step
+        else:
+            if delta_v >= 0:
+                return -self.v_step
+            else:
+                return self.v_step
+
+
 if __name__ == "__main__":
     pass

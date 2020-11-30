@@ -163,10 +163,18 @@ class PVEnv(PVEnvBase):
             self.history.dv.append(0.0)
             self.history.di.append(0.0)
             self.history.deg.append(0.0)
+            self.history.dp_norm.append(0.0)
+            self.history.dv_norm.append(0.0)
         else:
             self.history.dp.append(self.history.p[-1] - self.history.p[-2])
             self.history.dv.append(self.history.v[-1] - self.history.v[-2])
             self.history.di.append(self.history.i[-1] - self.history.i[-2])
+            self.history.dp_norm.append(
+                self.history.p_norm[-1] - self.history.p_norm[-2]
+            )
+            self.history.dv_norm.append(
+                self.history.v_norm[-1] - self.history.v_norm[-2]
+            )
             self.history.deg.append(
                 atan2(self.history.di[-1], self.history.dv[-1])
                 + atan2(self.history.i[-1], self.history.v[-1])
@@ -187,8 +195,8 @@ class PVEnv(PVEnvBase):
 
     def _get_action_space(self) -> gym.Space:
         return gym.spaces.Box(
-            low=-self.pvarray.voc / 2,
-            high=self.pvarray.voc / 2,
+            low=-round(self.pvarray.voc * 0.1, 0),
+            high=round(self.pvarray.voc * 0.1, 0),
             shape=(1,),
             dtype=np.float32,
         )

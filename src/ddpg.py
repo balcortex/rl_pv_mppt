@@ -6,6 +6,7 @@ from torch import nn
 from torch.nn import functional as F
 import copy
 
+from src.ou_noise import OUNoise
 from src.policies import BasePolicy
 from src.agents import Agent
 from src.replay_buffer import ReplayBuffer
@@ -17,7 +18,7 @@ class DDPGActor(nn.Module):
         obs_size: int,
         act_size: int,
         hidden: Sequence[int] = (128,),
-        use_tanh: bool = False,
+        use_tanh: bool = True,
     ):
         super().__init__()
 
@@ -80,6 +81,7 @@ class DDPGPolicy(BasePolicy):
         self,
         net: nn.Module,
         env: gym.Env,
+        noise: OUNoise,
         device: Union[str, torch.device],
         add_batch_dim: bool = False,
         epsilon: float = 1.0,
@@ -87,26 +89,40 @@ class DDPGPolicy(BasePolicy):
         self.net = net
         self.device = device
         self.env = env
+        self.noise = noise
         self.add_batch_dim = add_batch_dim
         self.epsilon = epsilon
+        self.low = env.action_space.low[0]
+        self.high = env.action_space.high[0]
 
     @torch.no_grad()
     def __call__(self, states: np.ndarray):
+        noise = 0.0
         if self.epsilon > np.random.rand():
-            return self.env.action_space.sample()
+            # noise = self.noise.sample() * self.epsilon
+            noise = self.noise.sample()
+            # print(f"{noise=}")
 
         if self.add_batch_dim:
             states = states[np.newaxis, :]
 
         states_v = torch.tensor(states, dtype=torch.float32)
         actions = self.net(states_v).cpu().numpy()
+        # print(f"{actions=}")
+        actions += noise
+        # print(f"{actions=}")
+        actions = self._unscale_actions(actions)
         actions = actions.clip(
             self.env.action_space.low[0], self.env.action_space.high[0]
         )
+        # print(f"{actions=}")
 
         if self.add_batch_dim:
             return actions[0]
         return actions
+
+    def _unscale_actions(self, scled_actions: torch.Tensor) -> torch.Tensor:
+        return self.low + (scled_actions + 1) * (self.high - self.low) / (2)
 
 
 class TargetNet:
@@ -191,22 +207,31 @@ class DDPGAgent(Agent):
         test_env: gym.Env,
         act_net: nn.Module,
         crt_net: nn.Module,
+        noise: OUNoise,
+        eps_schedule: EpsilonDecayLinear,
         device: torch.device,
         gamma: float,
-        beta_entropy: float,
         lr: float,
         n_steps: int,
         batch_size: int,
         chk_path: str,
         optimizer: str = "adam",
+        norm_rewards: bool = False,
+        clip_grads: Optional[float] = 0.0,
+        crt_lr: float = 1e-2,
+        tau: float = 1e-3,
     ):
         self.crt_net = crt_net
-        self.crt_optimizer = torch.optim.Adam(self.crt_net.parameters(), lr=lr)
+        self.crt_optimizer = torch.optim.Adam(self.crt_net.parameters(), lr=crt_lr)
         self.tgt_act = TargetNet(act_net)
         self.tgt_crt = TargetNet(crt_net)
-        self.replay_buffer = ReplayBuffer(10000)
-        self.epsilon_tracker = EpsilonDecayLinear(max_steps=10000)
+        self.replay_buffer = ReplayBuffer(50_000)
+        self.eps_schedule = eps_schedule
         self.batch_size = batch_size
+        self.noise = noise
+        self.norm_rewards = norm_rewards
+        self.clip_grads = clip_grads
+        self.tau = tau
 
         super().__init__(
             env=env,
@@ -214,12 +239,18 @@ class DDPGAgent(Agent):
             net=act_net,
             device=device,
             gamma=gamma,
-            beta_entropy=beta_entropy,
+            beta_entropy=None,
             lr=lr,
             n_steps=n_steps,
             batch_size=1,
             chk_path=chk_path,
             optimizer=optimizer,
+        )
+        self.optimizer = torch.optim.Adam(
+            act_net.parameters(),
+            lr=lr,
+            # weight_decay=0.1,
+            # weight_decay=0.1,
         )
 
     def _prepare_batch(self) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -256,8 +287,8 @@ class DDPGAgent(Agent):
         if len(self.replay_buffer) < self.batch_size:
             self._prepare_batch()
 
-        self.epsilon_tracker.step()
-        # self.policy.epsilon = self.epsilon_tracker.value
+        self.eps_schedule.step()
+        self.policy.epsilon = self.eps_schedule.value
         states, actions, values, dones, last_states = self.replay_buffer.sample(
             self.batch_size
         )
@@ -268,9 +299,10 @@ class DDPGAgent(Agent):
         dones_t = torch.tensor(dones, dtype=torch.bool).to(self.device)
         last_states_t = torch.tensor(last_states, dtype=torch.float32).to(self.device)
 
-        # std, mean = torch.std_mean(values_t)
-        # values_t -= mean
-        # values_t /= std + 1e-6
+        if self.norm_rewards:
+            std, mean = torch.std_mean(values_t)
+            values_t -= mean
+            values_t /= std + 1e-6
 
         return states_t, actions_t, values_t, dones_t, last_states_t
 
@@ -289,14 +321,12 @@ class DDPGAgent(Agent):
         q_last = self.tgt_crt.target_model(last_states, last_actions)
         q_last[dones] = 0.0
 
-        # std, mean = torch.std_mean(q_last)
-        # q_last -= mean
-        # q_last /= std + 1e-6
-
         q_ref = values.unsqueeze(-1) + q_last * self.gamma ** self.n_steps
         loss_value = F.mse_loss(q, q_ref.detach())
         self.value_loss = loss_value.item()
         loss_value.backward()
+        # if self.clip_grads > 0:
+        #     torch.nn.utils.clip_grad_norm_(self.crt_net.parameters(), self.clip_grads)
         self.crt_optimizer.step()
 
         self.crt_optimizer.zero_grad()
@@ -305,17 +335,21 @@ class DDPGAgent(Agent):
         loss_policy = -self.crt_net(states, pred_actions).mean()
         self.policy_loss = loss_policy.item()
         loss_policy.backward()
+
+        if self.clip_grads > 0:
+            torch.nn.utils.clip_grad_norm_(self.net.parameters(), self.clip_grads)
         self.optimizer.step()
 
         self.total_loss = self.policy_loss + self.value_loss
 
-        self.tgt_act.alpha_sync(alpha=1e-3)
-        self.tgt_crt.alpha_sync(alpha=1e-3)
+        self.tgt_act.alpha_sync(alpha=self.tau)
+        self.tgt_crt.alpha_sync(alpha=self.tau)
 
     def _get_train_policy(self) -> BasePolicy:
         return DDPGPolicy(
             net=self.net,
             env=self.env,
+            noise=self.noise,
             device=self.device,
             epsilon=1.0,
         )
@@ -324,6 +358,7 @@ class DDPGAgent(Agent):
         return DDPGPolicy(
             net=self.net,
             env=self.test_env,
+            noise=None,
             device=self.device,
             epsilon=0.0,
         )

@@ -65,9 +65,64 @@ class RewardDeltaPower:
             return self.b * dp
 
 
+class RewardPower:
+    """
+    Returns a reward based on the produced power
+    """
+
+    def __init__(self, norm: bool = False):
+        self.norm = norm
+
+    def __call__(self, history: History) -> float:
+        if self.norm:
+            return history.p_norm[-1]
+        return history.p[-1]
+
+
+class RewardPowerDeltaPower:
+    """
+    Returns a reward based on the produced power
+    """
+
+    def __init__(self, norm: bool = False):
+        self.norm = norm
+
+    def __call__(self, history: History) -> float:
+        if self.norm:
+            if history.dp_norm[-1] < 0:
+                return 0
+            else:
+                return history.p_norm[-1]
+        return history.p[-1] + history.dp[-1] * 5
+
+
+class RewardDeltaPowerVoltage:
+    """
+    Returns a reward based on the value of the change of power and change of voltage
+
+    if dp < 0:
+        return a * dp - c * abs(dv)
+    else:
+        return b * dp - c * abs(dv)
+    """
+
+    def __init__(self, a: float, b: float, c: float):
+        self.a = abs(a)
+        self.b = b
+        self.c = abs(c)
+
+    def __call__(self, history: History) -> float:
+        dp = history.dp[-1]
+        dv = history.dv[-1]
+        if dp < 0:
+            return self.a * dp - self.c * abs(dv)
+        else:
+            return self.b * dp - self.c * abs(dv)
+
+
 if __name__ == "__main__":
     history = History()
-    reward_fn = DiscreteRewardDeltaPower(2, 0, 1)
+    reward_fn = RewardDeltaPowerVoltage(2, 0, 1)
     history.dp.append(-1.2)
     reward_fn(history)
     history.dp.append(0)
